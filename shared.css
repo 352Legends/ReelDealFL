@@ -1350,7 +1350,10 @@ html, body {
 }
 
 
-/* Current tide emphasis */
-#currentTideLabel {
-  letter-spacing: 0.01em;
+/* Current tide upgraded display */
+#currentTideSub {
+  font-weight: 700;
+}
+#nextTideCountdown {
+  display: block;
 }

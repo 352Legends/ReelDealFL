@@ -215,14 +215,14 @@
     return `In ${hours} hr ${minutes} min`;
   }
 
-  function renderTides(predictions, tideEvents, sourceLabel) {
-    const summary = currentTideSummary(predictions, tideEvents);
+  function renderTides(predictions, sourceLabel) {
+    const summary = currentTideSummary(predictions);
     state.currentTideMinutes = summary.minutesAway || 0;
     $('currentTideLabel').textContent = summary.label;
-    $('currentTideSub').textContent = `${summary.height} · Next ${summary.nextChangeLabel} ${summary.nextChangeTime}`;
+    $('currentTideSub').textContent = `${summary.time} · ${summary.height}`;
     $('currentTideCountdown').textContent = formatCountdown(state.currentTideMinutes);
     const rowCount = tideRowsForScreen();
-    $('tideTable').innerHTML = tideEvents.slice(0, rowCount).map(p => {
+    $('tideTable').innerHTML = predictions.slice(0, rowCount).map(p => {
       const isHigh = p.type === 'H';
       return `<tr>
         <td>${formatMonthDayTime(p.t)}</td>
@@ -306,17 +306,10 @@
     renderLiveClock();
     renderSun();
     try {
-      const [tideJson, tideEventsJson] = await Promise.all([
-        safeFetchJson(tideApiUrl(cfg.tideStation)),
-        safeFetchJson(tideEventsApiUrl(cfg.tideStation))
-      ]);
-      renderTides(
-        tideJson.predictions || sampleTides(),
-        tideEventsJson.predictions || sampleTideEvents(),
-        tideJson.predictions ? 'NOAA tides' : 'Sample tide data'
-      );
+      const tideJson = await safeFetchJson(tideApiUrl(cfg.tideStation));
+      renderTides(tideJson.predictions || sampleTides(), tideJson.predictions ? 'NOAA tides' : 'Sample tide data');
     } catch (e) {
-      renderTides(sampleTides(), sampleTideEvents(), 'Sample tide data (NOAA fetch failed)');
+      renderTides(sampleTides(), 'Sample tide data (NOAA fetch failed)');
     }
     try {
       const windJson = await safeFetchJson(windApiUrl(cfg.windStation));
