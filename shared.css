@@ -1348,3 +1348,12 @@ html, body {
 .ad-media:not(.empty) span {
   display: none !important;
 }
+
+
+#currentTideLabel {
+  letter-spacing: 0.01em;
+}
+#currentTideCountdown {
+  color: var(--accent2);
+  font-weight: 700;
+}

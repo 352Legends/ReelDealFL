@@ -215,15 +215,14 @@
     return `In ${hours} hr ${minutes} min`;
   }
 
-  function renderTides(eventPredictions, currentSeries, sourceLabel) {
-    const summary = currentTideSummary(currentSeries, eventPredictions);
+  function renderTides(predictions, sourceLabel) {
+    const summary = currentTideSummary(predictions);
     state.currentTideMinutes = summary.minutesAway || 0;
     $('currentTideLabel').textContent = summary.label;
-    $('currentTideSub').textContent = `${summary.height} · ${summary.detail}`;
-    $('currentTideCountdown').textContent = formatCountdown(state.currentTideMinutes);
-
+    $('currentTideSub').textContent = `${summary.height} · ${summary.time}`;
+    $('currentTideCountdown').textContent = `Changes ${formatCountdown(state.currentTideMinutes)}`;
     const rowCount = tideRowsForScreen();
-    $('tideTable').innerHTML = eventPredictions.slice(0, rowCount).map(p => {
+    $('tideTable').innerHTML = predictions.slice(0, rowCount).map(p => {
       const isHigh = p.type === 'H';
       return `<tr>
         <td>${formatMonthDayTime(p.t)}</td>
@@ -307,17 +306,10 @@
     renderLiveClock();
     renderSun();
     try {
-      const [tideJson, currentTideJson] = await Promise.all([
-        safeFetchJson(tideApiUrl(cfg.tideStation)),
-        safeFetchJson(currentTideApiUrl(cfg.tideStation))
-      ]);
-      renderTides(
-        tideJson.predictions || sampleTides(),
-        currentTideJson.predictions || sampleCurrentTideSeries(),
-        (tideJson.predictions || currentTideJson.predictions) ? 'NOAA tides' : 'Sample tide data'
-      );
+      const tideJson = await safeFetchJson(tideApiUrl(cfg.tideStation));
+      renderTides(tideJson.predictions || sampleTides(), tideJson.predictions ? 'NOAA tides' : 'Sample tide data');
     } catch (e) {
-      renderTides(sampleTides(), sampleCurrentTideSeries(), 'Sample tide data (NOAA fetch failed)');
+      renderTides(sampleTides(), 'Sample tide data (NOAA fetch failed)');
     }
     try {
       const windJson = await safeFetchJson(windApiUrl(cfg.windStation));
