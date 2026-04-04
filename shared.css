@@ -800,8 +800,8 @@ html, body {
 
 .kiosk-body.kiosk-fullscreen .kiosk-shell {
   width: 100% !important;
-  height: 100% !important;
-  min-height: 100% !important;
+  height: auto !important;
+  min-height: auto !important;
   display: grid !important;
   grid-template-rows: auto auto minmax(0, 1fr) !important;
   gap: 8px !important;
@@ -815,7 +815,7 @@ html, body {
 
 .kiosk-body.kiosk-fullscreen .layout {
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   min-height: 0 !important;
   grid-template-columns: minmax(0, 1.2fr) minmax(360px, .8fr) !important;
   align-items: stretch !important;
@@ -824,7 +824,7 @@ html, body {
 .kiosk-body.kiosk-fullscreen .left-rail,
 .kiosk-body.kiosk-fullscreen .right-rail {
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   min-height: 0 !important;
 }
 
@@ -847,7 +847,7 @@ html, body {
 .kiosk-body.kiosk-fullscreen .hero-ad,
 .kiosk-body.kiosk-fullscreen .time-panel,
 .kiosk-body.kiosk-fullscreen .bottom-ad {
-  height: 100% !important;
+  height: auto !important;
 }
 
 .kiosk-body.kiosk-fullscreen .hero-ad .ad-media {
@@ -1194,7 +1194,7 @@ html, body {
 
 /* Ensure both panels fill the same row height */
 .kiosk-body.kiosk-fullscreen .top-grid > .panel {
-  height: 100% !important;
+  height: auto !important;
 }
 
 /* Increase top ad media height by ~10% */
@@ -1207,7 +1207,7 @@ html, body {
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
-  height: 100% !important;
+  height: auto !important;
 }
 
 
@@ -1220,7 +1220,7 @@ html, body {
 }
 .bottom-ad .ad-media img {
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   display: block !important;
   object-fit: contain !important;
 }
@@ -1241,8 +1241,8 @@ html, body {
 /* Top ad should fill container while preserving aspect ratio */
 .hero-ad .ad-media img {
   width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important; /* fill without distortion */
+  height: auto !important;
+  object-fit: contain !important; /* fill without distortion */
   object-position: center !important;
 }
 
@@ -1259,8 +1259,8 @@ html, body {
 }
 .bottom-ad .ad-media img {
   width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important; /* fill without distortion */
+  height: auto !important;
+  object-fit: contain !important; /* fill without distortion */
   object-position: center !important;
 }
 
@@ -1314,42 +1314,37 @@ html, body {
   .hero-ad .ad-media img,
   #topAdMedia img {
     width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
+    height: auto !important;
+    object-fit: contain !important;
     object-position: center !important;
   }
 }
 
 
-/* FORCE ALL AD IMAGES TO FULL COVER */
+
+
+
+/* Width-fill ad behavior: fill container width, preserve full image ratio, no crop */
 .hero-ad .ad-media,
 .bottom-ad .ad-media {
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   overflow: hidden !important;
   position: relative;
 }
 
-/* Ensure containers have defined height */
-.hero-ad .ad-media {
-  aspect-ratio: 1440 / 380 !important;
-}
-
-.bottom-ad .ad-media {
-  aspect-ratio: 16 / 9 !important;
-}
-
-/* FULL COVER IMAGE */
+/* Keep image visible in full while filling width */
 .hero-ad .ad-media img,
 .bottom-ad .ad-media img {
   width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  object-position: center center !important;
+  height: auto !important;
+  max-width: 100% !important;
   display: block !important;
+  object-fit: contain !important;
+  object-position: center center !important;
 }
 
-/* REMOVE ANY FALLBACK INTERFERENCE */
-.ad-media span {
+/* Do not force fallback text when an image exists */
+.ad-media:not(.empty) span {
   display: none !important;
 }
