@@ -1350,9 +1350,7 @@ html, body {
 }
 
 
-#nextTideLabel {
-  white-space: nowrap;
-}
-#nextTideSub {
-  line-height: 1.2;
+/* Current tide emphasis */
+#currentTideLabel {
+  letter-spacing: 0.01em;
 }

@@ -572,7 +572,7 @@ function calculateSunTimes(date, lat, lng) {
 function tideApiUrl(station) {
   const d = new Date();
   const begin = d.toISOString().slice(0,10).replace(/-/g,'');
-  return `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${begin}&range=36&station=${station}&product=predictions&datum=MLLW&time_zone=lst_ldt&units=english&format=json&application=CitrusKiosk`;
+  return `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${begin}&range=36&station=${station}&product=predictions&datum=MLLW&time_zone=lst_ldt&units=english&interval=6&format=json&application=CitrusKiosk`;
 }
 
 function tideEventsApiUrl(station) {
@@ -597,6 +597,19 @@ async function safeFetchJson(url) {
 
 function sampleTides() {
   const now = new Date();
+  const start = new Date(now.getTime() - 3 * 3600e3);
+  const points = [];
+  for (let i = 0; i <= 60; i++) {
+    const d = new Date(start.getTime() + i * 36 * 60000); // 36 min spacing
+    const angle = (i / 60) * Math.PI * 2;
+    const height = 1.2 + Math.sin(angle) * 0.9;
+    points.push({ t: d.toISOString(), v: height.toFixed(2) });
+  }
+  return points;
+}
+
+function sampleTideEvents() {
+  const now = new Date();
   const base = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   return [
     { t: new Date(base.getTime() + 2 * 3600e3).toISOString(), type: 'L', v: '0.44' },
@@ -618,74 +631,68 @@ function sampleRain() {
   };
 }
 
-function currentTideSummary(detailPredictions, eventPredictions = []) {
-  if (!Array.isArray(detailPredictions) || detailPredictions.length === 0) {
+function currentTideSummary(predictions, tideEvents = []) {
+  if (!Array.isArray(predictions) || predictions.length < 2) {
     return {
-      label: 'Current Tide',
+      label: 'Unavailable',
+      time: '—',
       height: '—',
-      trend: 'Unavailable',
-      nextEventLabel: 'Next Change',
-      nextEventTime: '—',
       minutesAway: 0,
-      nextEventAt: null
+      nextChangeLabel: '—',
+      nextChangeTime: '—'
     };
   }
 
   const now = new Date();
-  const points = detailPredictions
+  const enriched = predictions
     .map(p => ({ ...p, date: normalizeDateLike(p.t), value: Number(p.v) }))
     .filter(p => p.date && Number.isFinite(p.value))
     .sort((a, b) => a.date - b.date);
 
-  if (!points.length) {
+  if (enriched.length < 2) {
     return {
-      label: 'Current Tide',
+      label: 'Unavailable',
+      time: '—',
       height: '—',
-      trend: 'Unavailable',
-      nextEventLabel: 'Next Change',
-      nextEventTime: '—',
       minutesAway: 0,
-      nextEventAt: null
+      nextChangeLabel: '—',
+      nextChangeTime: '—'
     };
   }
 
-  let prev = points[0];
-  let next = points[points.length - 1];
-  for (let i = 0; i < points.length; i++) {
-    if (points[i].date <= now) prev = points[i];
-    if (points[i].date >= now) {
-      next = points[i];
+  let before = enriched[0];
+  let after = enriched[enriched.length - 1];
+
+  for (let i = 0; i < enriched.length - 1; i++) {
+    if (enriched[i].date <= now && enriched[i + 1].date >= now) {
+      before = enriched[i];
+      after = enriched[i + 1];
       break;
     }
   }
 
-  let currentValue = prev.value;
-  if (next && prev && next.date > prev.date) {
-    const ratio = Math.min(1, Math.max(0, (now - prev.date) / (next.date - prev.date)));
-    currentValue = prev.value + (next.value - prev.value) * ratio;
-  }
+  const spanMs = Math.max(1, after.date - before.date);
+  const progress = Math.max(0, Math.min(1, (now - before.date) / spanMs));
+  const currentHeight = before.value + (after.value - before.value) * progress;
+  const rising = after.value >= before.value;
 
-  const trend = next.value >= prev.value ? 'Rising' : 'Falling';
-
-  const events = (Array.isArray(eventPredictions) ? eventPredictions : [])
-    .map(p => ({ ...p, date: normalizeDateLike(p.t) }))
-    .filter(p => p.date)
+  const events = (Array.isArray(tideEvents) ? tideEvents : [])
+    .map(p => ({ ...p, date: normalizeDateLike(p.t), value: Number(p.v) }))
+    .filter(p => p.date && Number.isFinite(p.value))
     .sort((a, b) => a.date - b.date);
 
   const nextEvent = events.find(e => e.date > now) || null;
   const minutesAway = nextEvent ? Math.max(0, Math.round((nextEvent.date - now) / 60000)) : 0;
-  const nextEventLabel = nextEvent
-    ? (nextEvent.type === 'H' ? 'Next High' : 'Next Low')
-    : 'Next Change';
+  const nextChangeLabel = nextEvent ? (nextEvent.type === 'H' ? 'High' : 'Low') : '—';
+  const nextChangeTime = nextEvent ? formatClock(nextEvent.date) : '—';
 
   return {
-    label: 'Current Tide',
-    height: `${currentValue.toFixed(2)} ft`,
-    trend,
-    nextEventLabel,
-    nextEventTime: nextEvent ? formatClock(nextEvent.date) : '—',
+    label: rising ? 'Rising' : 'Falling',
+    time: nextChangeTime,
+    height: `${currentHeight.toFixed(2)} ft`,
     minutesAway,
-    nextEventAt: nextEvent ? nextEvent.date.toISOString() : null
+    nextChangeLabel,
+    nextChangeTime
   };
 }
 

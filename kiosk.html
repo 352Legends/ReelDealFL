@@ -42,10 +42,10 @@
           </div>
           <div class="overview-grid">
             <div class="metric primary">
-              <div class="metric-label">Current Tide</div>
-              <div class="metric-value" id="nextTideLabel">Loading…</div>
-              <div class="metric-sub" id="nextTideSub"></div>
-              <div class="metric-sub" id="nextTideCountdown">—</div>
+              <div class="metric-label">Current tide</div>
+              <div class="metric-value" id="currentTideLabel">Loading…</div>
+              <div class="metric-sub" id="currentTideSub"></div>
+              <div class="metric-sub" id="currentTideCountdown">—</div>
             </div>
             <div class="metric">
               <div class="metric-label">Sunrise</div>
@@ -147,8 +147,7 @@
   const state = {
     latestRainChance: 0,
     latestWindSpeed: 0,
-    nextTideMinutes: 0,
-    nextTideEventAt: null
+    currentTideMinutes: 0
   };
 
   function $(id) { return document.getElementById(id); }
@@ -216,15 +215,14 @@
     return `In ${hours} hr ${minutes} min`;
   }
 
-  function renderTides(detailPredictions, eventPredictions, sourceLabel) {
-    const summary = currentTideSummary(detailPredictions, eventPredictions);
-    state.nextTideMinutes = summary.minutesAway || 0;
-    state.nextTideEventAt = summary.nextEventAt || null;
-    $('nextTideLabel').textContent = summary.height;
-    $('nextTideSub').textContent = `${summary.trend} · ${summary.nextEventLabel} ${summary.nextEventTime}`;
-    $('nextTideCountdown').textContent = formatCountdown(state.nextTideMinutes);
+  function renderTides(predictions, tideEvents, sourceLabel) {
+    const summary = currentTideSummary(predictions, tideEvents);
+    state.currentTideMinutes = summary.minutesAway || 0;
+    $('currentTideLabel').textContent = summary.label;
+    $('currentTideSub').textContent = `${summary.height} · Next ${summary.nextChangeLabel} ${summary.nextChangeTime}`;
+    $('currentTideCountdown').textContent = formatCountdown(state.currentTideMinutes);
     const rowCount = tideRowsForScreen();
-    $('tideTable').innerHTML = (eventPredictions || []).slice(0, rowCount).map(p => {
+    $('tideTable').innerHTML = tideEvents.slice(0, rowCount).map(p => {
       const isHigh = p.type === 'H';
       return `<tr>
         <td>${formatMonthDayTime(p.t)}</td>
@@ -280,7 +278,7 @@
     const score = computeFishingScore({
       windSpeed: state.latestWindSpeed,
       rainChance: state.latestRainChance,
-      minutesToTide: state.nextTideMinutes
+      minutesToTide: state.currentTideMinutes
     });
     const badge = $('fishingScoreBadge');
     badge.textContent = score.toFixed(1);
@@ -312,12 +310,13 @@
         safeFetchJson(tideApiUrl(cfg.tideStation)),
         safeFetchJson(tideEventsApiUrl(cfg.tideStation))
       ]);
-      const detailPredictions = tideJson.predictions || sampleTides();
-      const eventPredictions = tideEventsJson.predictions || sampleTides();
-      renderTides(detailPredictions, eventPredictions, tideJson.predictions ? 'NOAA tides' : 'Sample tide data');
+      renderTides(
+        tideJson.predictions || sampleTides(),
+        tideEventsJson.predictions || sampleTideEvents(),
+        tideJson.predictions ? 'NOAA tides' : 'Sample tide data'
+      );
     } catch (e) {
-      const sample = sampleTides();
-      renderTides(sample, sample, 'Sample tide data (NOAA fetch failed)');
+      renderTides(sampleTides(), sampleTideEvents(), 'Sample tide data (NOAA fetch failed)');
     }
     try {
       const windJson = await safeFetchJson(windApiUrl(cfg.windStation));
@@ -336,10 +335,9 @@
   setInterval(() => location.reload(), 10 * 60 * 1000);
 
   setInterval(() => {
-    if (state.nextTideEventAt) {
-      const diff = Math.max(0, Math.round((new Date(state.nextTideEventAt) - new Date()) / 60000));
-      state.nextTideMinutes = diff;
-      $('nextTideCountdown').textContent = formatCountdown(state.nextTideMinutes);
+    if (typeof state.currentTideMinutes === 'number' && state.currentTideMinutes > 0) {
+      state.currentTideMinutes = Math.max(0, state.currentTideMinutes - 1);
+      $('currentTideCountdown').textContent = formatCountdown(state.currentTideMinutes);
       renderFishingScore();
     }
   }, 60 * 1000);
