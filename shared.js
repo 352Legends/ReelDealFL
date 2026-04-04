@@ -572,7 +572,13 @@ function calculateSunTimes(date, lat, lng) {
 function tideApiUrl(station) {
   const d = new Date();
   const begin = d.toISOString().slice(0,10).replace(/-/g,'');
-  return `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${begin}&range=24&station=${station}&product=predictions&datum=MLLW&time_zone=lst_ldt&units=english&interval=6&format=json&application=CitrusKiosk`;
+  return `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${begin}&range=36&station=${station}&product=predictions&datum=MLLW&time_zone=lst_ldt&units=english&interval=hilo&format=json&application=CitrusKiosk`;
+}
+
+function currentTideApiUrl(station) {
+  const d = new Date();
+  const begin = d.toISOString().slice(0,10).replace(/-/g,'');
+  return `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${begin}&range=36&station=${station}&product=predictions&datum=MLLW&time_zone=lst_ldt&units=english&format=json&application=CitrusKiosk`;
 }
 
 function windApiUrl(station) {
@@ -591,100 +597,102 @@ async function safeFetchJson(url) {
 
 function sampleTides() {
   const now = new Date();
-  return Array.from({ length: 12 }, (_, i) => {
-    const d = new Date(now.getTime() + i * 2 * 3600e3);
-    const angle = (i / 11) * Math.PI * 2;
-    const v = 1.2 + Math.sin(angle) * 0.8;
-    return { t: d.toISOString(), v: v.toFixed(2) };
-  });
+  const base = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return [
+    { t: new Date(base.getTime() + 2 * 3600e3).toISOString(), type: 'L', v: '0.44' },
+    { t: new Date(base.getTime() + 8 * 3600e3).toISOString(), type: 'H', v: '1.95' },
+    { t: new Date(base.getTime() + 14 * 3600e3).toISOString(), type: 'L', v: '0.39' },
+    { t: new Date(base.getTime() + 20 * 3600e3).toISOString(), type: 'H', v: '2.07' },
+    { t: new Date(base.getTime() + 26 * 3600e3).toISOString(), type: 'L', v: '0.41' },
+  ];
 }
 
-function deriveTideEventsFromPredictions(predictions = []) {
-  const out = [];
-  for (let i = 1; i < predictions.length - 1; i++) {
-    const prev = Number(predictions[i - 1].v);
-    const curr = Number(predictions[i].v);
-    const next = Number(predictions[i + 1].v);
-    if (curr >= prev && curr >= next) out.push({ ...predictions[i], type: 'H' });
-    if (curr <= prev && curr <= next) out.push({ ...predictions[i], type: 'L' });
-  }
-  return out;
-}
-
-function getCurrentTideState(predictions) {
-  if (!Array.isArray(predictions) || predictions.length < 2) {
-    return {
-      label: 'Current Tide',
-      height: '—',
-      trend: 'Unavailable',
-      nextChangeTime: '—',
-      nextChangeLabel: '—',
-      minutesToChange: 0
-    };
-  }
-
+function sampleCurrentTideSeries() {
   const now = new Date();
-  const enriched = predictions
-    .map(p => ({ ...p, date: normalizeDateLike(p.t), value: Number(p.v) }))
-    .filter(p => p.date && Number.isFinite(p.value))
-    .sort((a, b) => a.date - b.date);
+  const base = new Date(now.getTime() - (3 * 3600e3));
+  const vals = ['0.62','0.74','0.91','1.08','1.22','1.31','1.42'];
+  return vals.map((v, i) => ({
+    t: new Date(base.getTime() + i * 3600e3).toISOString(),
+    v
+  }));
+}
 
-  if (enriched.length < 2) {
-    return {
-      label: 'Current Tide',
-      height: '—',
-      trend: 'Unavailable',
-      nextChangeTime: '—',
-      nextChangeLabel: '—',
-      minutesToChange: 0
-    };
-  }
+function sampleWind() {
+  return { s: '8', d: '124', g: '11', t: new Date().toISOString() };
+}
 
-  let prev = enriched[0];
-  let next = enriched[1];
-  for (let i = 1; i < enriched.length; i++) {
-    if (enriched[i].date >= now) {
-      next = enriched[i];
-      prev = enriched[Math.max(0, i - 1)];
-      break;
-    }
-  }
-
-  const spanMs = Math.max(1, next.date - prev.date);
-  const progress = Math.min(1, Math.max(0, (now - prev.date) / spanMs));
-  const currentHeight = prev.value + (next.value - prev.value) * progress;
-  const rising = next.value > prev.value;
-
-  const events = deriveTideEventsFromPredictions(enriched);
-  const nextEvent = events.find(e => e.date > now) || events[0];
-  const minutesToChange = nextEvent ? Math.max(0, Math.round((nextEvent.date - now) / 60000)) : 0;
-
+function sampleRain() {
   return {
-    label: 'Current Tide',
-    height: `${currentHeight.toFixed(2)} ft`,
-    trend: rising ? 'Rising ↑' : 'Falling ↓',
-    nextChangeTime: nextEvent ? formatClock(nextEvent.date) : '—',
-    nextChangeLabel: nextEvent ? (nextEvent.type === 'H' ? 'High Tide' : 'Low Tide') : '—',
-    minutesToChange
+    now: 15,
+    summary: 'Low chance of rain in the next several hours.'
   };
 }
 
 function nextTideSummary(predictions) {
-  const current = getCurrentTideState(predictions);
+  if (!Array.isArray(predictions) || predictions.length === 0) return { label: 'Unavailable', time: '—', height: '—', minutesAway: 0 };
+  const now = new Date();
+  const enriched = predictions.map(p => ({ ...p, date: normalizeDateLike(p.t) }));
+  const next = enriched.find(p => p.date > now) || enriched[0];
+  const minutesAway = Math.max(0, Math.round((next.date - now) / 60000));
   return {
-    label: current.label,
-    time: current.nextChangeTime,
-    height: current.height,
-    minutesAway: current.minutesToChange,
-    trend: current.trend,
-    nextChangeLabel: current.nextChangeLabel
+    label: next.type === 'H' ? 'High Tide' : 'Low Tide',
+    time: formatClock(next.date),
+    height: `${Number(next.v).toFixed(2)} ft`,
+    minutesAway
   };
 }
 
-function buildUpcomingTideTable(predictions, count = 5) {
-  const events = deriveTideEventsFromPredictions(predictions);
+function currentTideSummary(series, tideEvents) {
+  if (!Array.isArray(series) || series.length === 0) {
+    return {
+      label: 'Unavailable',
+      height: '—',
+      detail: 'Current tide data unavailable',
+      minutesAway: 0
+    };
+  }
   const now = new Date();
-  return (events.filter(e => e.date > now).slice(0, count));
+  const enriched = series
+    .map(p => ({ ...p, date: normalizeDateLike(p.t), value: Number(p.v) }))
+    .filter(p => p.date && !Number.isNaN(p.value));
+
+  if (!enriched.length) {
+    return {
+      label: 'Unavailable',
+      height: '—',
+      detail: 'Current tide data unavailable',
+      minutesAway: 0
+    };
+  }
+
+  let currentIndex = enriched.findIndex(p => p.date > now);
+  if (currentIndex <= 0) currentIndex = Math.min(1, enriched.length - 1);
+  const prev = enriched[Math.max(0, currentIndex - 1)];
+  const next = enriched[Math.min(enriched.length - 1, currentIndex)];
+  const currentPoint = prev && next ? (
+    next.date.getTime() === prev.date.getTime()
+      ? prev
+      : {
+          value: prev.value + (((now - prev.date) / (next.date - prev.date)) * (next.value - prev.value))
+        }
+  ) : enriched[0];
+
+  const trendDelta = next && prev ? (next.value - prev.value) : 0;
+  const trendLabel = trendDelta > 0.01 ? 'Rising' : trendDelta < -0.01 ? 'Falling' : 'Slack';
+  const nextEvent = Array.isArray(tideEvents)
+    ? tideEvents.map(p => ({ ...p, date: normalizeDateLike(p.t) })).find(p => p.date > now)
+    : null;
+  const minutesAway = nextEvent ? Math.max(0, Math.round((nextEvent.date - now) / 60000)) : 0;
+  const nextEventLabel = nextEvent
+    ? `${nextEvent.type === 'H' ? 'Next High' : 'Next Low'} ${formatClock(nextEvent.date)}`
+    : 'Next change unavailable';
+
+  return {
+    label: trendLabel,
+    height: `${Number(currentPoint.value).toFixed(2)} ft`,
+    detail: nextEventLabel,
+    minutesAway
+  };
 }
 
 function pickRainSummary(periods = []) {

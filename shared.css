@@ -1348,12 +1348,3 @@ html, body {
 .ad-media:not(.empty) span {
   display: none !important;
 }
-
-
-/* Current tide upgraded display */
-#currentTideSub {
-  font-weight: 700;
-}
-#nextTideCountdown {
-  display: block;
-}
