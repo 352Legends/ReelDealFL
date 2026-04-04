@@ -1269,3 +1269,12 @@ html, body {
 .video-wrap video {
   autoplay: autoplay;
 }
+
+
+.video-wrap iframe,
+.video-wrap video {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  background: #000;
+}
