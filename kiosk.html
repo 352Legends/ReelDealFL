@@ -413,11 +413,23 @@
     });
   }
 
-  function playNextSponsor() {
+  async function ensureFullscreenPersistence() {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch (e) {
+      // Browser may block fullscreen without user gesture. Ignore and continue.
+    }
+  }
+
+  async function playNextSponsor() {
     const list = normalizedVideos();
     if (!list.length) return;
     const src = list[videoIndex % list.length];
     videoIndex += 1;
+
+    await ensureFullscreenPersistence();
     overlay.classList.add('active');
 
     if (isYouTubeUrl(src)) {
@@ -444,7 +456,7 @@
     video.onended = closeVideoOverlay;
   }
 
-  function closeVideoOverlay() {
+  async function closeVideoOverlay() {
     overlay.classList.remove('active');
     if (ytPlayer && typeof ytPlayer.destroy === 'function') {
       ytPlayer.destroy();
@@ -452,6 +464,7 @@
     }
     videoWrap.innerHTML = '';
     pendingYouTubeVideoId = null;
+    await ensureFullscreenPersistence();
   }
 
   overlay.addEventListener('click', closeVideoOverlay);
