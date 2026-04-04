@@ -1278,3 +1278,8 @@ html, body {
   display: block;
   background: #000;
 }
+
+/* Hide cursor in fullscreen kiosk mode */
+.kiosk-body.kiosk-fullscreen {
+  cursor: none !important;
+}

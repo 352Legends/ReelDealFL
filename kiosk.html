@@ -416,6 +416,8 @@
   async function playNextSponsor() {
     const list = normalizedVideos();
     if (!list.length) return;
+    if (overlay.classList.contains('active')) return;
+    clearTimeout(sponsorIntervalHandle);
     const src = list[videoIndex % list.length];
     videoIndex += 1;
     await ensureFullscreenMode();
@@ -462,10 +464,20 @@
     videoWrap.innerHTML = '';
     pendingYouTubeVideoId = null;
     await ensureFullscreenMode();
+    scheduleNextSponsor();
+  }
+
+  let sponsorIntervalHandle = null;
+
+  function scheduleNextSponsor() {
+    clearTimeout(sponsorIntervalHandle);
+    sponsorIntervalHandle = setTimeout(() => {
+      playNextSponsor();
+    }, Math.max(1, Number(cfg.sponsorIntervalMinutes || 3)) * 60 * 1000);
   }
 
   overlay.addEventListener('click', closeVideoOverlay);
-  setInterval(playNextSponsor, Math.max(1, Number(cfg.sponsorIntervalMinutes || 3)) * 60 * 1000);
+  scheduleNextSponsor();
 </script>
 </body>
 </html>
