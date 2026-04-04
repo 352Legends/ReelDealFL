@@ -1283,3 +1283,39 @@ html, body {
 .kiosk-body.kiosk-fullscreen {
   cursor: none !important;
 }
+
+
+/* Mobile fix: ensure top ad image container shows loaded image instead of fallback text */
+#topAdMedia {
+  position: relative;
+}
+#topAdMedia img {
+  display: block !important;
+}
+#topAdMedia.empty img {
+  display: none !important;
+}
+#topAdMedia:not(.empty) span {
+  display: none !important;
+}
+
+@media (max-width: 1200px) {
+  .image-only-ad,
+  .hero-ad {
+    min-height: 0 !important;
+  }
+  .hero-ad .ad-media,
+  #topAdMedia {
+    width: 100% !important;
+    aspect-ratio: 1440 / 380 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .hero-ad .ad-media img,
+  #topAdMedia img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+}
