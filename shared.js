@@ -3,20 +3,20 @@ const STORAGE_KEY = 'citrus-kiosk-profiles-v3';
 const ACTIVE_PROFILE_KEY = 'citrus-kiosk-active-profile-v3';
 
 const PROFILE_PRESETS = {
-  '34450': {
-    areaCode: '34450',
+  '34428': {
+    zipCode: '34428',
     title: 'Citrus County Tides, Weather & Rain Forecast',
-    subtitle: 'Crystal River area live coastal display',
+    subtitle: 'Crystal River Live Coastal Display',
     countyLabel: 'Crystal River / Citrus County, Florida',
-    timePanelTitle: 'Current local time',
-    overviewTitle: 'At a glance',
-    fishingTitle: 'Fishing conditions',
-    tidesTitle: 'Upcoming tides',
+    timePanelTitle: 'Current Local Time',
+    overviewTitle: 'At A Glance',
+    fishingTitle: 'Fishing Conditions',
+    tidesTitle: 'Upcoming Tides',
     tidesTag: 'Next 5',
-    windTitle: 'Wind details',
-    windTag: 'Live marine snapshot',
-    weatherDetailsTitle: 'Weather details',
-    weatherDetailsTag: 'Next 3 hours',
+    windTitle: 'Wind Details',
+    windTag: 'Live Marine Snapshot',
+    weatherDetailsTitle: 'Weather Details',
+    weatherDetailsTag: 'Next 3 Hours',
     adContactCopy: 'For Advertising Opportunities Please Call (352) 302-2882',
     topAdTitle: 'Premium Sponsor Placement',
     topAdBody: 'Promote your restaurant, charter, shop, or local event to customers in real time.',
@@ -28,23 +28,23 @@ const PROFILE_PRESETS = {
     sponsorIntervalMinutes: 3,
     tideStation: '8727343',
     windStation: '8727520',
-    latitude: 28.9025,
-    longitude: -82.5926,
+    latitude: 28.9632,
+    longitude: -82.6543
   },
-  '34429': {
-    areaCode: '34429',
+  '34446': {
+    zipCode: '34446',
     title: 'Citrus County Tides, Weather & Rain Forecast',
-    subtitle: 'Homosassa area live coastal display',
+    subtitle: 'Homosassa Live Coastal Display',
     countyLabel: 'Homosassa / Citrus County, Florida',
-    timePanelTitle: 'Current local time',
-    overviewTitle: 'At a glance',
-    fishingTitle: 'Fishing conditions',
-    tidesTitle: 'Upcoming tides',
+    timePanelTitle: 'Current Local Time',
+    overviewTitle: 'At A Glance',
+    fishingTitle: 'Fishing Conditions',
+    tidesTitle: 'Upcoming Tides',
     tidesTag: 'Next 5',
-    windTitle: 'Wind details',
-    windTag: 'Live marine snapshot',
-    weatherDetailsTitle: 'Weather details',
-    weatherDetailsTag: 'Next 3 hours',
+    windTitle: 'Wind Details',
+    windTag: 'Live Marine Snapshot',
+    weatherDetailsTitle: 'Weather Details',
+    weatherDetailsTag: 'Next 3 Hours',
     adContactCopy: 'For Advertising Opportunities Please Call (352) 302-2882',
     topAdTitle: 'Premium Sponsor Placement',
     topAdBody: 'Promote your restaurant, charter, shop, or local event to customers in real time.',
@@ -56,23 +56,23 @@ const PROFILE_PRESETS = {
     sponsorIntervalMinutes: 3,
     tideStation: '8727272',
     windStation: '8727520',
-    latitude: 28.7972,
-    longitude: -82.5759,
+    latitude: 28.7494,
+    longitude: -82.5140
   },
-  '34448': {
-    areaCode: '34448',
+  '34450': {
+    zipCode: '34450',
     title: 'Citrus County Tides, Weather & Rain Forecast',
-    subtitle: 'Inglis / Yankeetown area live coastal display',
-    countyLabel: 'Inglis / Yankeetown, Florida',
-    timePanelTitle: 'Current local time',
-    overviewTitle: 'At a glance',
-    fishingTitle: 'Fishing conditions',
-    tidesTitle: 'Upcoming tides',
+    subtitle: 'Inverness Live Coastal Display',
+    countyLabel: 'Inverness / Citrus County, Florida',
+    timePanelTitle: 'Current Local Time',
+    overviewTitle: 'At A Glance',
+    fishingTitle: 'Fishing Conditions',
+    tidesTitle: 'Upcoming Tides',
     tidesTag: 'Next 5',
-    windTitle: 'Wind details',
-    windTag: 'Live marine snapshot',
-    weatherDetailsTitle: 'Weather details',
-    weatherDetailsTag: 'Next 3 hours',
+    windTitle: 'Wind Details',
+    windTag: 'Live Marine Snapshot',
+    weatherDetailsTitle: 'Weather Details',
+    weatherDetailsTag: 'Next 3 Hours',
     adContactCopy: 'For Advertising Opportunities Please Call (352) 302-2882',
     topAdTitle: 'Premium Sponsor Placement',
     topAdBody: 'Promote your restaurant, charter, shop, or local event to customers in real time.',
@@ -82,14 +82,14 @@ const PROFILE_PRESETS = {
     bottomAdImage: '',
     videoUrls: ['sponsor.mp4'],
     sponsorIntervalMinutes: 3,
-    tideStation: '8727366',
+    tideStation: '8727520',
     windStation: '8727520',
-    latitude: 29.0274,
-    longitude: -82.6698,
+    latitude: 28.8317,
+    longitude: -82.2610
   }
 };
 
-const DEFAULT_PROFILE = PROFILE_PRESETS['34450'];
+const DEFAULT_PROFILE = PROFILE_PRESETS['34428'];
 
 function toTitleCase(str = '') {
   return str.replace(/\w\S*/g, (txt) =>
@@ -114,7 +114,7 @@ function writeProfiles(profiles) {
 
 function getProfileIdFromUrl() {
   const url = new URL(window.location.href);
-  return url.searchParams.get('code') || localStorage.getItem(ACTIVE_PROFILE_KEY) || DEFAULT_PROFILE.areaCode;
+  return url.searchParams.get('zip') || url.searchParams.get('code') || localStorage.getItem(ACTIVE_PROFILE_KEY) || DEFAULT_PROFILE.zipCode;
 }
 
 function setActiveProfile(profileId) {
@@ -124,12 +124,12 @@ function setActiveProfile(profileId) {
 function getConfig(profileId = getProfileIdFromUrl()) {
   const profiles = readProfiles();
   const cfg = profiles[profileId] || DEFAULT_PROFILE;
-  return { ...DEFAULT_PROFILE, ...cfg, areaCode: profileId };
+  return { ...DEFAULT_PROFILE, ...cfg, zipCode: profileId };
 }
 
-function saveConfig(config, profileId = config.areaCode || getProfileIdFromUrl()) {
+function saveConfig(config, profileId = config.zipCode || getProfileIdFromUrl()) {
   const profiles = readProfiles();
-  profiles[profileId] = { ...DEFAULT_PROFILE, ...config, areaCode: profileId };
+  profiles[profileId] = { ...DEFAULT_PROFILE, ...config, zipCode: profileId };
   writeProfiles(profiles);
   setActiveProfile(profileId);
 }
@@ -139,7 +139,7 @@ function deleteProfile(profileId) {
   delete profiles[profileId];
   writeProfiles(profiles);
   if (localStorage.getItem(ACTIVE_PROFILE_KEY) === profileId) {
-    setActiveProfile(DEFAULT_PROFILE.areaCode);
+    setActiveProfile(DEFAULT_PROFILE.zipCode);
   }
 }
 

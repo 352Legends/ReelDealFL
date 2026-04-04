@@ -13,10 +13,10 @@
       <div class="brand">
         <div class="eyebrow">Private Control Panel</div>
         <h1>Admin Setup</h1>
-        <p>Manage multiple kiosk profiles by area code. Retail and restaurant users should never access this page.</p>
+        <p>Manage multiple kiosk profiles by ZIP code. Retail and restaurant users should never access this page.</p>
       </div>
       <div class="actions">
-        <a class="btn" id="openKioskBtn" href="kiosk.html?code=34450">Open selected kiosk</a>
+        <a class="btn" id="openKioskBtn" href="kiosk.html?zip=34428">Open selected kiosk</a>
         <a class="btn" href="index.html">Package home</a>
       </div>
     </div>
@@ -27,18 +27,18 @@
           <h2>Kiosk profile</h2>
           <div class="form-grid">
             <div>
-              <label for="profileSelect">Choose area code profile</label>
+              <label for="profileSelect">Choose ZIP code profile</label>
               <select id="profileSelect"></select>
             </div>
             <div>
-              <label for="newProfileId">Create new area code profile</label>
+              <label for="newProfileId">Create new ZIP code profile</label>
               <div class="actions">
-                <input id="newProfileId" type="text" placeholder="Example: 34461" />
+                <input id="newProfileId" type="text" placeholder="Example: 34428" />
                 <button class="btn" type="button" id="createProfileBtn">Create</button>
               </div>
             </div>
           </div>
-          <p class="note">Each area code stores its own title, ad images, videos, NOAA stations, and weather location.</p>
+          <p class="note">Each ZIP code stores its own title, ad images, videos, NOAA stations, and weather location.</p>
         </div>
 
         <div class="panel">
@@ -157,17 +157,17 @@
   }
 
   function selectedProfileId() {
-    return profileSelect.value || DEFAULT_PROFILE.areaCode;
+    return profileSelect.value || DEFAULT_PROFILE.zipCode;
   }
 
   function refreshProfilesDropdown() {
     const profiles = readProfiles();
     const current = selectedProfileId();
     profileSelect.innerHTML = Object.keys(profiles).sort().map(id => `<option value="${id}">${id} — ${(profiles[id].countyLabel || 'Kiosk profile')}</option>`).join('');
-    profileSelect.value = profiles[current] ? current : DEFAULT_PROFILE.areaCode;
-    openKioskBtn.href = `kiosk.html?code=${selectedProfileId()}`;
+    profileSelect.value = profiles[current] ? current : DEFAULT_PROFILE.zipCode;
+    openKioskBtn.href = `kiosk.html?zip=${selectedProfileId()}`;
     setActiveProfile(selectedProfileId());
-    launchLinks.innerHTML = Object.keys(profiles).sort().map(id => `<div style="margin-bottom:8px"><a href="kiosk.html?code=${id}">Launch kiosk ${id}</a></div>`).join('');
+    launchLinks.innerHTML = Object.keys(profiles).sort().map(id => `<div style="margin-bottom:8px"><a href="kiosk.html?code=${id}">Launch ZIP ${id}</a></div>`).join('');
   }
 
   function fillForm() {
@@ -242,7 +242,7 @@
   profileSelect.addEventListener('change', () => {
     setActiveProfile(selectedProfileId());
     fillForm();
-    status.textContent = `Loaded area code profile ${selectedProfileId()}.`;
+    status.textContent = `Loaded ZIP code profile ${selectedProfileId()}.`;
   });
 
   createProfileBtn.onclick = () => {
@@ -251,11 +251,11 @@
       status.textContent = 'Enter an area code or profile ID first.';
       return;
     }
-    saveConfig({ ...DEFAULT_PROFILE, areaCode: id, countyLabel: `Area ${id}` }, id);
+    saveConfig({ ...DEFAULT_PROFILE, zipCode: id, countyLabel: `ZIP ${id}` }, id);
     refreshProfilesDropdown();
     profileSelect.value = id;
     fillForm();
-    status.textContent = `Created kiosk profile ${id}.`;
+    status.textContent = `Created kiosk ZIP profile ${id}.`;
     newProfileId.value = '';
   };
 
@@ -292,7 +292,7 @@
   saveBtn.onclick = () => {
     const id = selectedProfileId();
     const cfg = {
-      areaCode: id,
+      zipCode: id,
       title: title.value.trim(),
       subtitle: subtitle.value.trim(),
       countyLabel: countyLabel.value.trim(),
@@ -321,12 +321,12 @@
     };
     saveConfig(cfg, id);
     refreshProfilesDropdown();
-    status.textContent = `Saved profile ${id}. Launch kiosk.html?code=${id} on the display.`;
+    status.textContent = `Saved profile ${id}. Launch kiosk.html?zip=${id} on the display.`;
   };
 
   resetBtn.onclick = () => {
     const id = selectedProfileId();
-    saveConfig({ ...DEFAULT_PROFILE, areaCode: id }, id);
+    saveConfig({ ...DEFAULT_PROFILE, zipCode: id }, id);
     fillForm();
     status.textContent = `Reset profile ${id} to defaults.`;
   };
@@ -334,7 +334,7 @@
   deleteBtn.onclick = () => {
     const id = selectedProfileId();
     if (id === DEFAULT_PROFILE.areaCode) {
-      status.textContent = 'The default 34450 profile cannot be deleted.';
+      status.textContent = 'The default 34428 ZIP profile cannot be deleted.';
       return;
     }
     deleteProfile(id);
