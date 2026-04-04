@@ -3,10 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Citrus County Kiosk</title>
   <link rel="stylesheet" href="shared.css" />
 </head>
@@ -340,38 +337,16 @@
 
   window.addEventListener('resize', () => loadData());
 
-  async function enterBestFullscreen() {
-    const el = document.documentElement;
-    try {
-      if (el.requestFullscreen) {
-        await el.requestFullscreen();
-        return true;
-      }
-      if (el.webkitRequestFullscreen) {
-        el.webkitRequestFullscreen();
-        return true;
-      }
-    } catch (e) {}
-    document.body.classList.add('kiosk-fullscreen', 'mobile-fullscreen-fallback');
-    window.scrollTo(0, 1);
-    return false;
-  }
-
   $('fsBtn').addEventListener('click', async () => {
-    await enterBestFullscreen();
+    try {
+      await document.documentElement.requestFullscreen();
+    } catch (e) {
+      alert('Full screen must be allowed by the browser/device.');
+    }
   });
 
   document.addEventListener('fullscreenchange', () => {
     document.body.classList.toggle('kiosk-fullscreen', !!document.fullscreenElement);
-    if (!document.fullscreenElement) {
-      document.body.classList.remove('mobile-fullscreen-fallback');
-    }
-  });
-
-  window.addEventListener('orientationchange', () => {
-    if (document.body.classList.contains('mobile-fullscreen-fallback')) {
-      setTimeout(() => window.scrollTo(0, 1), 250);
-    }
   });
 
   const overlay = $('videoOverlay');
