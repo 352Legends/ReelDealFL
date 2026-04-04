@@ -1,0 +1,1271 @@
+
+:root {
+  --bg: #061826;
+  --bg2: #0a2234;
+  --panel: rgba(7, 30, 47, 0.95);
+  --panel2: rgba(14, 48, 72, 0.96);
+  --line: rgba(117, 191, 255, 0.18);
+  --text: #eef8ff;
+  --muted: #a9c6d9;
+  --accent: #4ec8ff;
+  --accent2: #83e1bc;
+  --good: #4bd18e;
+  --mid: #ffd166;
+  --bad: #ff7b7b;
+  --shadow: 0 18px 38px rgba(0,0,0,.28);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: radial-gradient(circle at top, #143e5f 0%, var(--bg) 55%, #03101a 100%);
+  color: var(--text);
+  font-family: Inter, Arial, sans-serif;
+}
+a { color: var(--accent); text-decoration: none; }
+button, input, textarea, select { font: inherit; }
+img { max-width: 100%; }
+
+.kiosk-body.kiosk-font-scale { font-size: 150%; }
+.admin-font-scale { font-size: 60%; }
+
+.container {
+  width: min(100vw, 1920px);
+  margin: 0 auto;
+  padding: 16px;
+}
+.kiosk-shell {
+  display: grid;
+  gap: 6px;
+  min-height: 100vh;
+}
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.eyebrow {
+  color: var(--accent2);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  margin-bottom: 8px;
+}
+.brand h1 {
+  margin: 0 0 6px;
+  font-size: clamp(28px, 3vw, 56px);
+  line-height: 1;
+}
+.brand p {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(14px, 1.2vw, 20px);
+}
+.actions {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.btn {
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.07);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 14px;
+  cursor: pointer;
+}
+.btn:hover {
+  background: rgba(255,255,255,.12);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+.panel h2 {
+  margin: 0;
+  font-size: clamp(20px, 1.8vw, 30px);
+}
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.section-tag {
+  color: var(--muted);
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.05);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.top-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(240px, .55fr);
+  gap: 6px;
+  align-items: stretch;
+}
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(360px, .82fr);
+  gap: 6px;
+  min-height: 0;
+}
+.left-rail, .right-rail {
+  display: grid;
+  gap: 6px;
+  min-height: 0;
+}
+
+.time-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: right;
+}
+.time-label {
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 8px;
+}
+.live-time {
+  font-size: clamp(34px, 3vw, 58px);
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.live-date {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: clamp(14px, 1.1vw, 19px);
+}
+.mini-status {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.hero-ad, .bottom-ad {
+  display: grid;
+  gap: 5px;
+  align-content: start;
+}
+.ad-copy h3 {
+  margin: 0 0 6px;
+  font-size: clamp(20px, 1.6vw, 30px);
+}
+.ad-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(13px, 1vw, 17px);
+}
+.ad-media {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px dashed rgba(255,255,255,.12);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.ad-media.empty {
+  color: var(--muted);
+}
+.hero-ad .ad-media {
+  aspect-ratio: 1440 / 380;
+}
+.bottom-ad .ad-media {
+  aspect-ratio: 16 / 9;
+}
+.ad-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr 1fr 1.2fr;
+  gap: 6px;
+}
+.metric, .score-card, .wind-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+  min-width: 0;
+}
+.metric.primary {
+  background: linear-gradient(180deg, rgba(78,200,255,.18), rgba(255,255,255,.03));
+}
+.metric.rain {
+  background: linear-gradient(180deg, rgba(131,225,188,.12), rgba(255,255,255,.03));
+}
+.metric-label {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.metric-value {
+  font-size: clamp(22px, 2vw, 36px);
+  font-weight: 800;
+  line-height: 1.05;
+}
+.metric-sub {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.score-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 5px;
+  align-items: center;
+  padding: 10px 12px;
+  min-height: 0;
+}
+.score-badge {
+  width: 98px; /* ~56 * 1.75 */
+  height: 98px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 35px; /* ~20 * 1.75 */
+  font-weight: 900;
+  border: 3px solid rgba(255,255,255,.12);
+}
+.score-good { background: rgba(75, 209, 142, .18); color: #9cf1c6; }
+.score-mid { background: rgba(255, 209, 102, .18); color: #ffe5a2; }
+.score-bad { background: rgba(255, 123, 123, .18); color: #ffb1b1; }
+.score-copy h3 {
+  margin: 0 0 4px;
+  font-size: clamp(22px, 1.6vw, 28px); /* scaled up */
+}
+.score-copy p {
+  margin: 0;
+  font-size: 19px; /* ~11 * 1.75 */
+  line-height: 1.25;
+  color: var(--muted);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.table th, .table td {
+  padding: 10px 8px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.table th {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.badge {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.badge-high {
+  background: rgba(131,225,188,.16);
+  color: #a9f2d1;
+}
+.badge-low {
+  background: rgba(78,200,255,.16);
+  color: #afe7ff;
+}
+
+.wind-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.wind-card h3 {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.wind-card .metric-value {
+  font-size: clamp(28px, 2vw, 40px);
+}
+
+.hidden-until-move { transition: opacity .3s ease; }
+
+.video-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+.video-overlay.active { display: flex; }
+.video-wrap {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+.video-wrap video {
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain;
+  background: #000;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+label {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+input[type="text"], textarea, select {
+  width: 100%;
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+.note, .status {
+  color: var(--muted);
+  font-size: 12px;
+}
+.preview-thumb {
+  width: 100%;
+  max-width: 320px;
+  display: none;
+  margin-top: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.14);
+}
+
+.big-center {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+.big-center .panel {
+  max-width: 880px;
+}
+
+.kiosk-body.kiosk-fullscreen {
+  overflow: hidden;
+}
+.kiosk-body.kiosk-fullscreen .container {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  margin: 0;
+  padding: 10px 12px;
+}
+.kiosk-body.kiosk-fullscreen .kiosk-shell {
+  min-height: 100dvh;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 5px;
+}
+.kiosk-body.kiosk-fullscreen .layout {
+  height: 100%;
+  align-items: stretch;
+}
+.kiosk-body.kiosk-fullscreen .left-rail {
+  display: grid;
+  grid-template-rows: auto auto auto;
+  gap: 4px;
+}
+.kiosk-body.kiosk-fullscreen .right-rail {
+  grid-template-rows: minmax(0, 1fr) minmax(0, .92fr);
+}
+.kiosk-body.kiosk-fullscreen .top-grid {
+  grid-template-columns: minmax(0, 1.68fr) minmax(250px, .52fr);
+}
+.kiosk-body.kiosk-fullscreen .overview-grid {
+  grid-template-columns: 1.35fr 1fr 1fr 1.12fr;
+}
+.kiosk-body.kiosk-fullscreen .panel {
+  padding: 12px;
+}
+.kiosk-body.kiosk-fullscreen #fsBtn {
+  display: none;
+}
+.kiosk-body.kiosk-fullscreen .brand h1 {
+  font-size: clamp(24px, 2vw, 38px);
+}
+.kiosk-body.kiosk-fullscreen .brand p {
+  font-size: clamp(11px, .8vw, 15px);
+}
+.kiosk-body.kiosk-fullscreen .metric-value {
+  font-size: clamp(20px, 1.6vw, 28px);
+}
+.kiosk-body.kiosk-fullscreen .live-time {
+  font-size: clamp(28px, 2.2vw, 42px);
+}
+.kiosk-body.kiosk-fullscreen .hero-ad .ad-media {
+  max-height: 140px;
+}
+.kiosk-body.kiosk-fullscreen .bottom-ad .ad-media {
+  max-height: 180px;
+}
+.kiosk-body.kiosk-fullscreen .table th,
+.kiosk-body.kiosk-fullscreen .table td {
+  padding: 6px 6px;
+  font-size: 11px;
+}
+
+@media (max-width: 1200px) {
+  .top-grid, .layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 1000px) {
+  .overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wind-grid, .form-grid { grid-template-columns: 1fr; }
+}
+
+
+#nextTideCountdown {
+  color: var(--accent2);
+  font-weight: 700;
+}
+
+
+.weather-subhead {
+  margin-top: 16px;
+}
+
+.weather-hourly-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.hour-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px;
+  min-width: 0;
+}
+
+.hour-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.hour-time {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.hour-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.hour-temp {
+  font-size: clamp(24px, 1.8vw, 34px);
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.hour-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 6px;
+}
+.hour-meta strong {
+  color: var(--text);
+}
+
+@media (max-width: 1000px) {
+  .weather-hourly-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.image-only-ad {
+  padding: 10px;
+}
+
+.image-only-ad .ad-media {
+  margin-top: 0;
+}
+
+/* Make upcoming tides panel fit content height */
+.table {
+  height: auto !important;
+}
+
+.table tbody tr {
+  height: auto !important;
+}
+
+.panel {
+  align-self: start;
+}
+
+
+/* Tight vertical stacking */
+.panel {
+  margin: 0 !important;
+  padding: 10px 12px;
+}
+
+.section-heading {
+  margin-bottom: 6px !important;
+}
+
+.left-rail,
+.right-rail {
+  gap: 6px !important;
+}
+
+/* Remove excess spacing inside layout */
+.layout {
+  gap: 6px !important;
+}
+
+.top-grid {
+  gap: 6px !important;
+}
+
+/* Ensure no hidden spacing from children */
+.panel > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+
+/* Grid-aligned spacing system */
+:root {
+  --grid-1: 4px;
+  --grid-2: 8px;
+  --grid-3: 12px;
+  --grid-4: 16px;
+}
+
+/* Outer structure */
+.kiosk-shell {
+  gap: var(--grid-2) !important;
+}
+.top-grid,
+.layout,
+.left-rail,
+.right-rail,
+.wind-grid,
+.overview-grid,
+.form-grid,
+.actions {
+  gap: var(--grid-2) !important;
+}
+
+/* Panels and internal rhythm */
+.panel {
+  padding: var(--grid-3) !important;
+  border-radius: 18px;
+}
+
+.panel h2,
+.ad-copy h3,
+.card h3,
+.wind-card h3,
+.score-copy h3 {
+  margin-top: 0 !important;
+}
+
+.section-heading {
+  margin-bottom: var(--grid-2) !important;
+}
+
+.metric,
+.wind-card,
+.score-card {
+  padding: var(--grid-3) !important;
+}
+
+.metric-label,
+.time-label {
+  margin-bottom: var(--grid-1) !important;
+}
+
+.metric-sub,
+.live-date,
+.mini-status {
+  margin-top: var(--grid-1) !important;
+}
+
+.ad-copy {
+  margin-bottom: var(--grid-2) !important;
+}
+
+.ad-media {
+  margin-top: 0 !important;
+}
+
+.table th,
+.table td {
+  padding-top: var(--grid-2) !important;
+  padding-bottom: var(--grid-2) !important;
+}
+
+.weather-subhead {
+  margin-top: var(--grid-2) !important;
+}
+
+.hour-card {
+  padding: var(--grid-2) !important;
+}
+
+.hour-top,
+.score-card,
+.wind-grid,
+.weather-hourly-grid {
+  gap: var(--grid-2) !important;
+}
+
+/* Fullscreen rhythm */
+.kiosk-body.kiosk-fullscreen .container {
+  padding: var(--grid-2) var(--grid-3) !important;
+}
+.kiosk-body.kiosk-fullscreen .kiosk-shell {
+  gap: var(--grid-2) !important;
+}
+.kiosk-body.kiosk-fullscreen .top-grid,
+.kiosk-body.kiosk-fullscreen .layout,
+.kiosk-body.kiosk-fullscreen .left-rail,
+.kiosk-body.kiosk-fullscreen .right-rail {
+  gap: var(--grid-2) !important;
+}
+.kiosk-body.kiosk-fullscreen .panel,
+.kiosk-body.kiosk-fullscreen .metric,
+.kiosk-body.kiosk-fullscreen .wind-card,
+.kiosk-body.kiosk-fullscreen .score-card {
+  padding: var(--grid-2) !important;
+}
+
+
+/* Real-estate stacking fix */
+.left-rail,
+.right-rail {
+  grid-auto-rows: max-content !important;
+  align-content: start !important;
+  align-items: start !important;
+}
+
+.left-rail > .panel,
+.right-rail > .panel,
+.top-grid > .panel,
+.layout > .panel,
+.score-card,
+.metric,
+.wind-card,
+.hour-card {
+  align-self: start !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+.table,
+.table tbody,
+.table tr,
+.table td,
+.table th {
+  height: auto !important;
+}
+
+.kiosk-body.kiosk-fullscreen .layout,
+.kiosk-body.kiosk-fullscreen .left-rail,
+.kiosk-body.kiosk-fullscreen .right-rail,
+.kiosk-body.kiosk-fullscreen .top-grid {
+  align-content: start !important;
+  align-items: start !important;
+}
+
+.kiosk-body.kiosk-fullscreen .left-rail {
+  grid-template-rows: auto auto auto !important;
+  grid-auto-rows: max-content !important;
+}
+
+.kiosk-body.kiosk-fullscreen .right-rail {
+  grid-template-rows: auto auto !important;
+  grid-auto-rows: max-content !important;
+}
+
+.kiosk-body.kiosk-fullscreen .panel,
+.kiosk-body.kiosk-fullscreen .score-card,
+.kiosk-body.kiosk-fullscreen .metric,
+.kiosk-body.kiosk-fullscreen .wind-card,
+.kiosk-body.kiosk-fullscreen .hour-card {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+.kiosk-body.kiosk-fullscreen .hero-ad,
+.kiosk-body.kiosk-fullscreen .bottom-ad,
+.kiosk-body.kiosk-fullscreen .time-panel {
+  height: auto !important;
+}
+
+.kiosk-body.kiosk-fullscreen .overview-grid,
+.kiosk-body.kiosk-fullscreen .wind-grid,
+.kiosk-body.kiosk-fullscreen .weather-hourly-grid {
+  align-items: start !important;
+}
+
+.kiosk-body.kiosk-fullscreen .hero-ad .ad-media {
+  max-height: 120px !important;
+}
+
+.kiosk-body.kiosk-fullscreen .bottom-ad .ad-media {
+  max-height: 140px !important;
+}
+
+/* Keep spacing tight and consistent between stacked containers */
+.kiosk-shell,
+.top-grid,
+.layout,
+.left-rail,
+.right-rail {
+  gap: 8px !important;
+}
+
+.panel + .panel {
+  margin-top: 0 !important;
+}
+
+
+/* Force full-screen occupancy */
+html, body {
+  width: 100%;
+  min-height: 100%;
+}
+
+.kiosk-body.kiosk-fullscreen {
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+.kiosk-body.kiosk-fullscreen .container {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 8px 10px !important;
+}
+
+.kiosk-body.kiosk-fullscreen .kiosk-shell {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto auto minmax(0, 1fr) !important;
+  gap: 8px !important;
+}
+
+.kiosk-body.kiosk-fullscreen .top-grid {
+  width: 100% !important;
+  grid-template-columns: minmax(0, 1.7fr) minmax(250px, .55fr) !important;
+  align-items: stretch !important;
+}
+
+.kiosk-body.kiosk-fullscreen .layout {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, .8fr) !important;
+  align-items: stretch !important;
+}
+
+.kiosk-body.kiosk-fullscreen .left-rail,
+.kiosk-body.kiosk-fullscreen .right-rail {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.kiosk-body.kiosk-fullscreen .left-rail {
+  display: grid !important;
+  grid-template-rows: auto auto 1fr !important;
+  gap: 8px !important;
+}
+
+.kiosk-body.kiosk-fullscreen .right-rail {
+  display: grid !important;
+  grid-template-rows: auto 1fr !important;
+  gap: 8px !important;
+}
+
+.kiosk-body.kiosk-fullscreen .panel {
+  width: 100% !important;
+}
+
+.kiosk-body.kiosk-fullscreen .hero-ad,
+.kiosk-body.kiosk-fullscreen .time-panel,
+.kiosk-body.kiosk-fullscreen .bottom-ad {
+  height: 100% !important;
+}
+
+.kiosk-body.kiosk-fullscreen .hero-ad .ad-media {
+  width: 100% !important;
+}
+
+.kiosk-body.kiosk-fullscreen .bottom-ad .ad-media {
+  width: 100% !important;
+}
+
+
+/* Increase top section by ~50% */
+.kiosk-body.kiosk-fullscreen .top-grid {
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, .6fr) !important;
+  min-height: 180px;
+}
+
+.kiosk-body.kiosk-fullscreen .hero-ad {
+  padding: 16px !important;
+}
+
+.kiosk-body.kiosk-fullscreen .time-panel {
+  padding: 16px !important;
+}
+
+/* Increase time size */
+.kiosk-body.kiosk-fullscreen .live-time {
+  font-size: clamp(42px, 3vw, 72px) !important;
+}
+
+.kiosk-body.kiosk-fullscreen .live-date {
+  font-size: clamp(18px, 1.4vw, 24px) !important;
+}
+
+/* Increase ad visual presence */
+.kiosk-body.kiosk-fullscreen .hero-ad .ad-media {
+  max-height: 180px !important;
+}
+
+
+/* +10% vertical padding across sections */
+.panel,
+.metric,
+.wind-card,
+.score-card,
+.hour-card,
+.time-panel,
+.hero-ad,
+.bottom-ad {
+  padding-top: 13px !important;
+  padding-bottom: 13px !important;
+}
+
+
+/* Center app in fullscreen while still filling space */
+.kiosk-body.kiosk-fullscreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.kiosk-body.kiosk-fullscreen .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.kiosk-body.kiosk-fullscreen .kiosk-shell {
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+
+/* TRUE vertical + horizontal centering fix */
+.kiosk-body.kiosk-fullscreen {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 100vh !important;
+}
+
+.kiosk-body.kiosk-fullscreen .container {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+.kiosk-body.kiosk-fullscreen .kiosk-shell {
+  width: 100%;
+  max-width: 1920px;
+  margin: auto !important;
+}
+
+/* Remove any forced full-height stretching causing imbalance */
+.kiosk-body.kiosk-fullscreen .container,
+.kiosk-body.kiosk-fullscreen .kiosk-shell {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+
+/* FIX: Center WITHOUT breaking grid stack */
+.kiosk-body.kiosk-fullscreen {
+  display: block !important;
+}
+
+.kiosk-body.kiosk-fullscreen .container {
+  height: 100dvh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+/* Preserve grid layout */
+.kiosk-body.kiosk-fullscreen .kiosk-shell {
+  margin-top: auto !important;
+  margin-bottom: auto !important;
+}
+
+/* Remove previous overrides that broke stacking */
+.kiosk-body.kiosk-fullscreen .kiosk-shell,
+.kiosk-body.kiosk-fullscreen .container {
+  align-items: unset !important;
+}
+
+
+/* ===== Fullscreen centering + anti-overlap reset ===== */
+.kiosk-body.kiosk-fullscreen {
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.kiosk-body.kiosk-fullscreen .container {
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-width: 100vw !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 12px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+}
+
+.kiosk-body.kiosk-fullscreen .kiosk-shell {
+  width: min(100%, 1920px) !important;
+  max-width: 1920px !important;
+  height: auto !important;
+  max-height: calc(100dvh - 24px) !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+  overflow: hidden !important;
+  align-self: center !important;
+  justify-self: center !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto !important;
+  gap: 8px !important;
+}
+
+/* Preserve stack order and stop row stretching */
+.kiosk-body.kiosk-fullscreen .top-grid,
+.kiosk-body.kiosk-fullscreen .layout,
+.kiosk-body.kiosk-fullscreen .left-rail,
+.kiosk-body.kiosk-fullscreen .right-rail {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  align-items: start !important;
+  align-content: start !important;
+  gap: 8px !important;
+}
+
+.kiosk-body.kiosk-fullscreen .top-grid {
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, .6fr) !important;
+}
+
+.kiosk-body.kiosk-fullscreen .layout {
+  grid-template-columns: minmax(0, 1.18fr) minmax(360px, .82fr) !important;
+}
+
+.kiosk-body.kiosk-fullscreen .left-rail {
+  display: grid !important;
+  grid-template-rows: auto auto auto !important;
+  grid-auto-rows: max-content !important;
+}
+
+.kiosk-body.kiosk-fullscreen .right-rail {
+  display: grid !important;
+  grid-template-rows: auto auto !important;
+  grid-auto-rows: max-content !important;
+}
+
+.kiosk-body.kiosk-fullscreen .panel,
+.kiosk-body.kiosk-fullscreen .metric,
+.kiosk-body.kiosk-fullscreen .score-card,
+.kiosk-body.kiosk-fullscreen .wind-card,
+.kiosk-body.kiosk-fullscreen .hour-card,
+.kiosk-body.kiosk-fullscreen .hero-ad,
+.kiosk-body.kiosk-fullscreen .bottom-ad,
+.kiosk-body.kiosk-fullscreen .time-panel {
+  position: relative !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  align-self: start !important;
+  overflow: hidden !important;
+}
+
+/* Remove any fullscreen forced-height behavior that can create overlap */
+.kiosk-body.kiosk-fullscreen .hero-grid,
+.kiosk-body.kiosk-fullscreen .wind-grid,
+.kiosk-body.kiosk-fullscreen .weather-hourly-grid,
+.kiosk-body.kiosk-fullscreen .table,
+.kiosk-body.kiosk-fullscreen .table tbody,
+.kiosk-body.kiosk-fullscreen .table tr {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+.kiosk-body.kiosk-fullscreen .table td,
+.kiosk-body.kiosk-fullscreen .table th {
+  line-height: 1.15 !important;
+}
+
+/* Keep ad media from blowing up layout */
+.kiosk-body.kiosk-fullscreen .hero-ad .ad-media {
+  max-height: 150px !important;
+}
+
+.kiosk-body.kiosk-fullscreen .bottom-ad .ad-media {
+  max-height: 160px !important;
+}
+
+
+/* Left align header content */
+.header {
+  align-items: flex-start !important;
+}
+
+.brand {
+  text-align: left !important;
+}
+
+.brand h1,
+.brand p,
+.eyebrow {
+  text-align: left !important;
+}
+
+.actions {
+  margin-left: auto !important;
+}
+
+
+/* Hard left-align fix for header text block */
+.kiosk-shell > .header {
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+}
+
+.kiosk-shell > .header .brand {
+  flex: 1 1 auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  justify-self: start !important;
+  align-self: start !important;
+}
+
+.kiosk-shell > .header .eyebrow,
+.kiosk-shell > .header .brand h1,
+.kiosk-shell > .header .brand p {
+  width: 100% !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  text-align: left !important;
+}
+
+.kiosk-shell > .header .actions {
+  flex: 0 0 auto !important;
+  margin-left: 12px !important;
+  justify-self: end !important;
+}
+
+/* Preserve left alignment in fullscreen too */
+.kiosk-body.kiosk-fullscreen .kiosk-shell > .header,
+.kiosk-body.kiosk-fullscreen .kiosk-shell > .header .brand,
+.kiosk-body.kiosk-fullscreen .kiosk-shell > .header .eyebrow,
+.kiosk-body.kiosk-fullscreen .kiosk-shell > .header .brand h1,
+.kiosk-body.kiosk-fullscreen .kiosk-shell > .header .brand p {
+  text-align: left !important;
+  justify-self: start !important;
+}
+
+
+/* Outer safe-area padding (~20%) */
+.kiosk-body.kiosk-fullscreen .container {
+  padding: 4vh 4vw !important; /* responsive outer padding */
+  box-sizing: border-box;
+}
+
+/* Ensure content respects padding */
+.kiosk-body.kiosk-fullscreen .kiosk-shell {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+/* Scale entire app up by 5% */
+.kiosk-body.kiosk-fullscreen .kiosk-shell {
+  transform: scale(1.05);
+  transform-origin: center center;
+}
+
+
+/* Decrease titles/headlines by ~10% */
+.brand h1,
+.panel h2,
+.section-heading h2,
+.ad-copy h3,
+.score-copy h3,
+.wind-card h3 {
+  font-size: 0.9em !important;
+}
+
+/* Slightly adjust eyebrow as well */
+.eyebrow {
+  font-size: calc(0.9 * 1em) !important;
+}
+
+
+/* Increase top ad height by ~10% and match time panel height */
+.kiosk-body.kiosk-fullscreen .top-grid {
+  align-items: stretch !important;
+}
+
+/* Ensure both panels fill the same row height */
+.kiosk-body.kiosk-fullscreen .top-grid > .panel {
+  height: 100% !important;
+}
+
+/* Increase top ad media height by ~10% */
+.kiosk-body.kiosk-fullscreen .hero-ad .ad-media {
+  max-height: 198px !important; /* was ~180px */
+}
+
+/* Ensure time panel matches the row height */
+.kiosk-body.kiosk-fullscreen .time-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  height: 100% !important;
+}
+
+
+/* Bottom ad image reliability fix */
+.bottom-ad .ad-media {
+  min-height: 180px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.bottom-ad .ad-media img {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+
+.ad-contact {
+  text-align: center;
+  font-weight: 600;
+  font-size: clamp(14px, 1.2vw, 20px);
+}
+
+/* Adjust ad contact copy */
+.ad-contact {
+  text-align: left !important;
+  font-weight: 500;
+  font-size: clamp(7px, 0.6vw, 10px) !important; /* ~50% smaller */
+}
+
+/* Top ad should fill container while preserving aspect ratio */
+.hero-ad .ad-media img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important; /* fill without distortion */
+  object-position: center !important;
+}
+
+/* Ensure container keeps its intended ratio */
+.hero-ad .ad-media {
+  aspect-ratio: 1440 / 380;
+  overflow: hidden;
+}
+
+/* Bottom ad should fill container while preserving aspect ratio */
+.bottom-ad .ad-media {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+.bottom-ad .ad-media img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important; /* fill without distortion */
+  object-position: center !important;
+}
+
+
+/* Video autoplay reliability */
+.video-wrap video {
+  autoplay: autoplay;
+}

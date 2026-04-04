@@ -1,0 +1,348 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Citrus Kiosk Admin</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body class="admin-font-scale">
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="eyebrow">Private Control Panel</div>
+        <h1>Admin Setup</h1>
+        <p>Manage multiple kiosk profiles by area code. Retail and restaurant users should never access this page.</p>
+      </div>
+      <div class="actions">
+        <a class="btn" id="openKioskBtn" href="kiosk.html?code=34450">Open selected kiosk</a>
+        <a class="btn" href="index.html">Package home</a>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="left-rail">
+        <div class="panel">
+          <h2>Kiosk profile</h2>
+          <div class="form-grid">
+            <div>
+              <label for="profileSelect">Choose area code profile</label>
+              <select id="profileSelect"></select>
+            </div>
+            <div>
+              <label for="newProfileId">Create new area code profile</label>
+              <div class="actions">
+                <input id="newProfileId" type="text" placeholder="Example: 34461" />
+                <button class="btn" type="button" id="createProfileBtn">Create</button>
+              </div>
+            </div>
+          </div>
+          <p class="note">Each area code stores its own title, ad images, videos, NOAA stations, and weather location.</p>
+        </div>
+
+        <div class="panel">
+          <h2>Display branding</h2>
+          <div class="form-grid">
+            <div><label for="title">Display title</label><input id="title" type="text" /></div>
+            <div><label for="subtitle">Subtitle</label><input id="subtitle" type="text" /></div>
+            <div><label for="countyLabel">Location label</label><input id="countyLabel" type="text" /></div>
+            <div><label for="interval">Sponsor video interval (minutes)</label><input id="interval" type="text" /></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Editable section titles</h2>
+          <div class="form-grid">
+            <div><label for="timePanelTitle">Time panel title</label><input id="timePanelTitle" type="text" /></div>
+            <div><label for="overviewTitle">Overview section title</label><input id="overviewTitle" type="text" /></div>
+            <div><label for="fishingTitle">Fishing section title</label><input id="fishingTitle" type="text" /></div>
+            <div><label for="tidesTitle">Tides section title</label><input id="tidesTitle" type="text" /></div>
+            <div><label for="tidesTag">Tides section tag</label><input id="tidesTag" type="text" /></div>
+            <div><label for="windTitle">Wind section title</label><input id="windTitle" type="text" /></div>
+            <div><label for="windTag">Wind section tag</label><input id="windTag" type="text" /></div>
+            <div><label for="weatherDetailsTitle">Weather details title</label><input id="weatherDetailsTitle" type="text" /></div>
+            <div><label for="weatherDetailsTag">Weather details tag</label><input id="weatherDetailsTag" type="text" /></div>
+<div><label for="adContactCopy">Ad Contact Copy</label><input id="adContactCopy" type="text" /></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Ad copy</h2>
+          <div class="form-grid">
+            <div><label for="topAdTitle">Top ad title</label><input id="topAdTitle" type="text" /></div>
+            <div><label for="topAdBody">Top ad body</label><input id="topAdBody" type="text" /></div>
+            <div><label for="bottomAdTitle">Bottom ad title</label><input id="bottomAdTitle" type="text" /></div>
+            <div><label for="bottomAdBody">Bottom ad body</label><input id="bottomAdBody" type="text" /></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Ad images</h2>
+          <p class="note">Top sponsor image is locked to 1440×380 ratio. Bottom ad is locked to 16:9.</p>
+          <div class="form-grid">
+            <div>
+              <label for="topAdImageFile">Top ad image</label>
+              <input id="topAdImageFile" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+              <img id="topAdPreview" class="preview-thumb" alt="Top ad preview" />
+              <p class="note"><button class="btn" type="button" id="clearTopAdImage">Remove top image</button></p>
+            </div>
+            <div>
+              <label for="bottomAdImageFile">Bottom ad image</label>
+              <input id="bottomAdImageFile" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+              <img id="bottomAdPreview" class="preview-thumb" alt="Bottom ad preview" />
+              <p class="note"><button class="btn" type="button" id="clearBottomAdImage">Remove bottom image</button></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Sponsor videos</h2>
+          <label for="videoUrls">One MP4/WebM URL or local filename per line</label>
+          <textarea id="videoUrls" placeholder="https://example.com/videos/sponsor1.mp4&#10;videos/sponsor2.mp4&#10;sponsor.mp4"></textarea>
+          <p class="note">Videos play full-screen on the kiosk as a timed sponsor break.</p>
+        </div>
+      </div>
+
+      <div class="right-rail">
+        <div class="panel">
+          <h2>Data settings</h2>
+          <div class="form-grid">
+            <div><label for="tideStation">NOAA tide station</label><input id="tideStation" type="text" /></div>
+            <div><label for="windStation">NOAA wind station</label><input id="windStation" type="text" /></div>
+            <div><label for="lat">Latitude</label><input id="lat" type="text" /></div>
+            <div><label for="lng">Longitude</label><input id="lng" type="text" /></div>
+          </div>
+          <p class="note">Latitude/longitude drives sunrise, sunset, and the live rain forecast zone.</p>
+        </div>
+
+        <div class="panel">
+          <h2>Actions</h2>
+          <div class="actions">
+            <button class="btn" id="saveBtn">Save selected profile</button>
+            <button class="btn" id="resetBtn">Reset selected profile</button>
+            <button class="btn" id="deleteBtn" type="button">Delete selected profile</button>
+          </div>
+          <p id="status" class="status" style="margin-top:14px">Settings not saved yet.</p>
+        </div>
+
+        <div class="panel">
+          <h2>Launch links</h2>
+          <div id="launchLinks" class="note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script src="shared.js"></script>
+<script>
+  const topAdImageFile = document.getElementById('topAdImageFile');
+  const bottomAdImageFile = document.getElementById('bottomAdImageFile');
+  const topAdPreview = document.getElementById('topAdPreview');
+  const bottomAdPreview = document.getElementById('bottomAdPreview');
+  const profileSelect = document.getElementById('profileSelect');
+  const openKioskBtn = document.getElementById('openKioskBtn');
+  const launchLinks = document.getElementById('launchLinks');
+  let topAdImageData = '';
+  let bottomAdImageData = '';
+
+  function setPreview(imgEl, value) {
+    if (value) {
+      imgEl.src = value;
+      imgEl.style.display = 'block';
+    } else {
+      imgEl.removeAttribute('src');
+      imgEl.style.display = 'none';
+    }
+  }
+
+  function selectedProfileId() {
+    return profileSelect.value || DEFAULT_PROFILE.areaCode;
+  }
+
+  function refreshProfilesDropdown() {
+    const profiles = readProfiles();
+    const current = selectedProfileId();
+    profileSelect.innerHTML = Object.keys(profiles).sort().map(id => `<option value="${id}">${id} — ${(profiles[id].countyLabel || 'Kiosk profile')}</option>`).join('');
+    profileSelect.value = profiles[current] ? current : DEFAULT_PROFILE.areaCode;
+    openKioskBtn.href = `kiosk.html?code=${selectedProfileId()}`;
+    setActiveProfile(selectedProfileId());
+    launchLinks.innerHTML = Object.keys(profiles).sort().map(id => `<div style="margin-bottom:8px"><a href="kiosk.html?code=${id}">Launch kiosk ${id}</a></div>`).join('');
+  }
+
+  function fillForm() {
+    refreshProfilesDropdown();
+    const cfg = getConfig(selectedProfileId());
+    title.value = cfg.title;
+    subtitle.value = cfg.subtitle;
+    countyLabel.value = cfg.countyLabel;
+    interval.value = cfg.sponsorIntervalMinutes;
+    timePanelTitle.value = cfg.timePanelTitle || 'Current local time';
+    overviewTitle.value = cfg.overviewTitle || 'At a glance';
+    fishingTitle.value = cfg.fishingTitle || 'Fishing conditions';
+    tidesTitle.value = cfg.tidesTitle || 'Upcoming tides';
+    tidesTag.value = cfg.tidesTag || 'Next 5';
+    windTitle.value = cfg.windTitle || 'Wind details';
+    windTag.value = cfg.windTag || 'Live marine snapshot';
+    weatherDetailsTitle.value = cfg.weatherDetailsTitle || 'Weather details';
+    weatherDetailsTag.value = cfg.weatherDetailsTag || 'Next 3 hours';
+    adContactCopy.value = cfg.adContactCopy || 'For Advertising Opportunities Please Call (352) 302-2882';
+    topAdTitle.value = cfg.topAdTitle;
+    topAdBody.value = cfg.topAdBody;
+    bottomAdTitle.value = cfg.bottomAdTitle;
+    bottomAdBody.value = cfg.bottomAdBody;
+    videoUrls.value = (cfg.videoUrls || []).join('\n');
+    tideStation.value = cfg.tideStation;
+    windStation.value = cfg.windStation;
+    lat.value = cfg.latitude;
+    lng.value = cfg.longitude;
+    topAdImageData = cfg.topAdImage || '';
+    bottomAdImageData = cfg.bottomAdImage || '';
+    setPreview(topAdPreview, topAdImageData);
+    setPreview(bottomAdPreview, bottomAdImageData);
+  }
+
+  async function fileToDataUrl(file, targetWidth = 1280, targetHeight = 720, quality = 0.86) {
+    const rawDataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error || new Error('File read failed'));
+      reader.readAsDataURL(file);
+    });
+
+    return await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = targetWidth;
+          canvas.height = targetHeight;
+          const ctx = canvas.getContext('2d');
+
+          ctx.fillStyle = '#0b1d2b';
+          ctx.fillRect(0, 0, targetWidth, targetHeight);
+
+          const scale = Math.min(targetWidth / img.width, targetHeight / img.height);
+          const drawW = img.width * scale;
+          const drawH = img.height * scale;
+          const dx = (targetWidth - drawW) / 2;
+          const dy = (targetHeight - drawH) / 2;
+
+          ctx.drawImage(img, dx, dy, drawW, drawH);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        } catch (err) {
+          reject(err);
+        }
+      };
+      img.onerror = () => reject(new Error('Image load failed'));
+      img.src = rawDataUrl;
+    });
+  }
+
+  profileSelect.addEventListener('change', () => {
+    setActiveProfile(selectedProfileId());
+    fillForm();
+    status.textContent = `Loaded area code profile ${selectedProfileId()}.`;
+  });
+
+  createProfileBtn.onclick = () => {
+    const id = newProfileId.value.trim();
+    if (!id) {
+      status.textContent = 'Enter an area code or profile ID first.';
+      return;
+    }
+    saveConfig({ ...DEFAULT_PROFILE, areaCode: id, countyLabel: `Area ${id}` }, id);
+    refreshProfilesDropdown();
+    profileSelect.value = id;
+    fillForm();
+    status.textContent = `Created kiosk profile ${id}.`;
+    newProfileId.value = '';
+  };
+
+  topAdImageFile.addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    topAdImageData = await fileToDataUrl(file, 1440, 380, 0.84);
+    setPreview(topAdPreview, topAdImageData);
+    status.textContent = 'Top ad image optimized and loaded. Click Save selected profile to publish it.';
+  });
+
+  bottomAdImageFile.addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    bottomAdImageData = await fileToDataUrl(file, 1280, 720, 0.84);
+    setPreview(bottomAdPreview, bottomAdImageData);
+    status.textContent = 'Bottom ad image optimized and loaded. Click Save selected profile to publish it.';
+  });
+
+  clearTopAdImage.onclick = () => {
+    topAdImageData = '';
+    topAdImageFile.value = '';
+    setPreview(topAdPreview, '');
+    status.textContent = 'Top ad image removed. Save to publish.';
+  };
+
+  clearBottomAdImage.onclick = () => {
+    bottomAdImageData = '';
+    bottomAdImageFile.value = '';
+    setPreview(bottomAdPreview, '');
+    status.textContent = 'Bottom ad image removed. Save to publish.';
+  };
+
+  saveBtn.onclick = () => {
+    const id = selectedProfileId();
+    const cfg = {
+      areaCode: id,
+      title: title.value.trim(),
+      subtitle: subtitle.value.trim(),
+      countyLabel: countyLabel.value.trim(),
+      sponsorIntervalMinutes: Math.max(1, Number(interval.value || 3)),
+      timePanelTitle: timePanelTitle.value.trim(),
+      overviewTitle: overviewTitle.value.trim(),
+      fishingTitle: fishingTitle.value.trim(),
+      tidesTitle: tidesTitle.value.trim(),
+      tidesTag: tidesTag.value.trim(),
+      windTitle: windTitle.value.trim(),
+      windTag: windTag.value.trim(),
+      weatherDetailsTitle: weatherDetailsTitle.value.trim(),
+      weatherDetailsTag: weatherDetailsTag.value.trim(),
+      adContactCopy: adContactCopy.value.trim(),
+      topAdTitle: topAdTitle.value.trim(),
+      topAdBody: topAdBody.value.trim(),
+      bottomAdTitle: bottomAdTitle.value.trim(),
+      bottomAdBody: bottomAdBody.value.trim(),
+      topAdImage: topAdImageData,
+      bottomAdImage: bottomAdImageData,
+      videoUrls: videoUrls.value.split(/\n+/).map(v => v.trim()).filter(Boolean),
+      tideStation: tideStation.value.trim(),
+      windStation: windStation.value.trim(),
+      latitude: Number(lat.value),
+      longitude: Number(lng.value),
+    };
+    saveConfig(cfg, id);
+    refreshProfilesDropdown();
+    status.textContent = `Saved profile ${id}. Launch kiosk.html?code=${id} on the display.`;
+  };
+
+  resetBtn.onclick = () => {
+    const id = selectedProfileId();
+    saveConfig({ ...DEFAULT_PROFILE, areaCode: id }, id);
+    fillForm();
+    status.textContent = `Reset profile ${id} to defaults.`;
+  };
+
+  deleteBtn.onclick = () => {
+    const id = selectedProfileId();
+    if (id === DEFAULT_PROFILE.areaCode) {
+      status.textContent = 'The default 34450 profile cannot be deleted.';
+      return;
+    }
+    deleteProfile(id);
+    fillForm();
+    status.textContent = `Deleted profile ${id}.`;
+  };
+
+  fillForm();
+</script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Citrus County Kiosk</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body class="kiosk-body kiosk-font-scale">
+  <div class="container kiosk-shell">
+    <div class="header hidden-until-move" id="topBar">
+      <div class="brand">
+        <div class="eyebrow">Live Coastal Conditions</div>
+        <h1 id="displayTitle">Citrus County Tides, Weather & Rain Forecast</h1>
+        <p id="displaySubtitle"></p>
+      </div>
+      <div class="actions">
+        <button class="btn" id="fsBtn">Enter full screen</button>
+      </div>
+    </div>
+
+    <div class="top-grid">
+      <div class="panel hero-ad image-only-ad">
+        <div class="ad-media empty" id="topAdMedia"><span>No top ad image loaded</span></div>
+      </div>
+
+      <div class="panel time-panel">
+        <div class="time-label" id="timePanelTitle">Current local time</div>
+        <div class="live-time" id="liveTime">—</div>
+        <div class="live-date" id="liveDate">—</div>
+        <div class="mini-status" id="updatedAt">Loading live data…</div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="left-rail">
+        <div class="panel">
+          <div class="section-heading">
+            <h2 id="overviewTitle">At a glance</h2>
+            <span class="section-tag" id="countyTag"></span>
+          </div>
+          <div class="overview-grid">
+            <div class="metric primary">
+              <div class="metric-label">Next tide</div>
+              <div class="metric-value" id="nextTideLabel">Loading…</div>
+              <div class="metric-sub" id="nextTideSub"></div>
+              <div class="metric-sub" id="nextTideCountdown">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Sunrise</div>
+              <div class="metric-value" id="sunrise">—</div>
+              <div class="metric-sub" id="countyLabel1"></div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Sunset</div>
+              <div class="metric-value" id="sunset">—</div>
+              <div class="metric-sub" id="countyLabel2"></div>
+            </div>
+            <div class="metric rain">
+              <div class="metric-label">Rain forecast</div>
+              <div class="metric-value" id="rainChanceNow">—</div>
+              <div class="metric-sub" id="rainSummary">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel score-card">
+          <div class="score-badge score-mid" id="fishingScoreBadge">—</div>
+          <div class="score-copy">
+            <h3 id="fishingTitle">Fishing conditions</h3>
+            <p id="fishingScoreMessage">Calculating live score…</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-heading">
+            <h2 id="tidesTitle">Upcoming tides</h2>
+            <span class="section-tag" id="tidesTag">Next 5</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr><th>Date &amp; Time</th><th>Type</th><th>Height</th></tr>
+            </thead>
+            <tbody id="tideTable"></tbody>
+          </table>
+        </div>
+
+        <div class="panel ad-contact">
+          <p id="adContactCopy">For Advertising Opportunities Please Call (352) 302-2882</p>
+        </div>
+
+      </div>
+
+      <div class="right-rail">
+        <div class="panel">
+          <div class="section-heading">
+            <h2 id="windTitle">Wind details</h2>
+            <span class="section-tag" id="windTag">Live marine snapshot</span>
+          </div>
+          <div class="wind-grid">
+            <div class="wind-card">
+              <h3>Speed</h3>
+              <div class="metric-value" id="windSpeed">—</div>
+              <div class="metric-sub">Current wind</div>
+            </div>
+            <div class="wind-card">
+              <h3>Direction</h3>
+              <div class="metric-value" id="windDir">—</div>
+              <div class="metric-sub">Compass degrees</div>
+            </div>
+            <div class="wind-card">
+              <h3>Gust</h3>
+              <div class="metric-value" id="windGust">—</div>
+              <div class="metric-sub">Peak reading</div>
+            </div>
+          </div>
+
+          <div class="section-heading weather-subhead">
+            <h2 id="weatherDetailsTitle">Weather details</h2>
+            <span class="section-tag" id="weatherDetailsTag">Next 3 hours</span>
+          </div>
+          <div class="weather-hourly-grid" id="weatherHourlyGrid"></div>
+        </div>
+
+        <div class="panel bottom-ad">
+          <div class="ad-copy">
+            <h3 id="bottomAdTitle"></h3>
+            <p id="bottomAdBody"></p>
+          </div>
+          <div class="ad-media empty" id="bottomAdMedia"><span>No bottom ad image loaded</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-overlay" id="videoOverlay">
+    <div class="video-wrap"><video id="sponsorVideo" playsinline autoplay muted></video></div>
+  </div>
+
+<script src="shared.js"></script>
+<script>
+  const cfg = getConfig();
+  setActiveProfile(cfg.areaCode);
+
+  const state = {
+    latestRainChance: 0,
+    latestWindSpeed: 0,
+    nextTideMinutes: 0
+  };
+
+  function $(id) { return document.getElementById(id); }
+
+  $('displayTitle').textContent = cfg.title;
+  $('displaySubtitle').textContent = `${cfg.subtitle} · Area code ${cfg.areaCode}`;
+  $('countyTag').textContent = cfg.countyLabel;
+  $('countyLabel1').textContent = cfg.countyLabel;
+  $('countyLabel2').textContent = cfg.countyLabel;
+  $('bottomAdTitle').textContent = cfg.bottomAdTitle;
+  $('bottomAdBody').textContent = cfg.bottomAdBody;
+  $('timePanelTitle').textContent = toTitleCase(cfg.timePanelTitle || 'Current local time');
+  $('overviewTitle').textContent = toTitleCase(cfg.overviewTitle || 'At a glance');
+  $('fishingTitle').textContent = toTitleCase(cfg.fishingTitle || 'Fishing conditions');
+  $('tidesTitle').textContent = toTitleCase(cfg.tidesTitle || 'Upcoming tides');
+  $('tidesTag').textContent = cfg.tidesTag || 'Next 5';
+  $('windTitle').textContent = toTitleCase(cfg.windTitle || 'Wind details');
+  $('windTag').textContent = cfg.windTag || 'Live marine snapshot';
+  $('weatherDetailsTitle').textContent = toTitleCase(cfg.weatherDetailsTitle || 'Weather details');
+  $('weatherDetailsTag').textContent = cfg.weatherDetailsTag || 'Next 3 hours';
+  $('adContactCopy').textContent = cfg.adContactCopy || 'For Advertising Opportunities Please Call (352) 302-2882';
+
+  function renderAdImage(containerId, imageData, altText) {
+    const wrap = $(containerId);
+    if (!wrap) return;
+    if (imageData) {
+      wrap.classList.remove('empty');
+      wrap.innerHTML = `<img src="${imageData}" alt="${altText}" />`;
+    } else {
+      wrap.classList.add('empty');
+      wrap.innerHTML = `<span>No ${altText.toLowerCase()} loaded</span>`;
+    }
+  }
+
+  renderAdImage('topAdMedia', cfg.topAdImage, 'Top ad image');
+  renderAdImage('bottomAdMedia', cfg.bottomAdImage, 'Bottom ad image');
+
+  function renderLiveClock() {
+    const now = new Date();
+    $('liveTime').textContent = formatClock(now, true);
+    $('liveDate').textContent = formatDateLong(now);
+  }
+
+  function renderSun() {
+    const times = calculateSunTimes(new Date(), Number(cfg.latitude), Number(cfg.longitude));
+    $('sunrise').textContent = formatClock(times.sunrise);
+    $('sunset').textContent = formatClock(times.sunset);
+  }
+
+  function tideRowsForScreen() {
+    const w = window.innerWidth || 1280;
+    const h = window.innerHeight || 720;
+    if (w <= 900 || h <= 700) return 3;
+    if (w <= 1280 || h <= 820) return 4;
+    return 5;
+  }
+
+  function formatCountdown(minutesAway) {
+    if (!Number.isFinite(minutesAway) || minutesAway < 0) return 'Happening now';
+    if (minutesAway < 1) return 'Happening now';
+    const hours = Math.floor(minutesAway / 60);
+    const minutes = minutesAway % 60;
+    if (hours <= 0) return `In ${minutes} min`;
+    if (minutes === 0) return `In ${hours} hr`;
+    return `In ${hours} hr ${minutes} min`;
+  }
+
+  function renderTides(predictions, sourceLabel) {
+    const summary = nextTideSummary(predictions);
+    state.nextTideMinutes = summary.minutesAway || 0;
+    $('nextTideLabel').textContent = summary.label;
+    $('nextTideSub').textContent = `${summary.time} · ${summary.height}`;
+    $('nextTideCountdown').textContent = formatCountdown(state.nextTideMinutes);
+    const rowCount = tideRowsForScreen();
+    $('tideTable').innerHTML = predictions.slice(0, rowCount).map(p => {
+      const isHigh = p.type === 'H';
+      return `<tr>
+        <td>${formatMonthDayTime(p.t)}</td>
+        <td><span class="badge ${isHigh ? 'badge-high' : 'badge-low'}">${isHigh ? 'High' : 'Low'}</span></td>
+        <td>${Number(p.v).toFixed(2)} ft</td>
+      </tr>`;
+    }).join('');
+    $('updatedAt').textContent = `${sourceLabel} · updated ${formatDateTime()}`;
+    renderFishingScore();
+  }
+
+  function renderWind(wind, sourceLabel) {
+    const speed = Number(wind.s ?? 0);
+    const dir = wind.d ?? '—';
+    const gust = wind.g ?? '—';
+    state.latestWindSpeed = speed;
+    $('windSpeed').textContent = speed ? `${speed} kt` : '—';
+    $('windDir').textContent = dir === '—' ? '—' : `${dir}°`;
+    $('windGust').textContent = gust === '—' ? '—' : `${gust} kt`;
+    $('updatedAt').textContent = `${sourceLabel} · updated ${formatDateTime()}`;
+    renderFishingScore();
+  }
+
+  function renderRain(rain, sourceLabel) {
+    state.latestRainChance = Number(rain.now ?? 0);
+    $('rainChanceNow').textContent = `${state.latestRainChance}%`;
+    $('rainSummary').textContent = rain.summary || 'Rain data unavailable';
+    $('updatedAt').textContent = `${sourceLabel} · updated ${formatDateTime()}`;
+    renderFishingScore();
+  }
+
+  function renderWeatherDetails(periods, sourceLabel) {
+    const rows = (periods || []).slice(0, 3);
+    $('weatherHourlyGrid').innerHTML = rows.map((p) => {
+      const icon = weatherIconFromForecast(p.shortForecast || '');
+      const clouds = cloudCoverFromForecast(p.shortForecast || '');
+      const uv = p.uvIndex?.value ?? p.uvIndex ?? '—';
+      const temp = p.temperature ?? '—';
+      return `<div class="hour-card">
+        <div class="hour-top">
+          <div class="hour-time">${formatShortHour(p.startTime)}</div>
+          <div class="hour-icon" aria-hidden="true">${icon}</div>
+        </div>
+        <div class="hour-temp">${temp}°</div>
+        <div class="hour-meta"><span>Clouds</span><strong>${clouds}</strong></div>
+        <div class="hour-meta"><span>UV</span><strong>${uv}</strong></div>
+      </div>`;
+    }).join('');
+    $('updatedAt').textContent = `${sourceLabel} · updated ${formatDateTime()}`;
+  }
+
+  function renderFishingScore() {
+    const score = computeFishingScore({
+      windSpeed: state.latestWindSpeed,
+      rainChance: state.latestRainChance,
+      minutesToTide: state.nextTideMinutes
+    });
+    const badge = $('fishingScoreBadge');
+    badge.textContent = score.toFixed(1);
+    badge.className = `score-badge ${scoreClass(score)}`;
+    $('fishingScoreMessage').textContent = fishingMessage(score);
+  }
+
+  async function loadRainForecast() {
+    try {
+      const pointJson = await safeFetchJson(pointsApiUrl(cfg.latitude, cfg.longitude));
+      const hourlyUrl = pointJson?.properties?.forecastHourly;
+      if (!hourlyUrl) throw new Error('Missing forecastHourly URL');
+      const hourly = await safeFetchJson(hourlyUrl);
+      const periods = hourly?.properties?.periods || [];
+      renderRain(pickRainSummary(periods), 'NWS hourly rain forecast');
+      renderWeatherDetails(periods, 'NWS hourly weather forecast');
+    } catch (e) {
+      const sample = sampleHourlyWeather();
+      renderRain(sampleRain(), 'Sample rain forecast (NWS fetch failed)');
+      renderWeatherDetails(sample, 'Sample weather forecast (NWS fetch failed)');
+    }
+  }
+
+  async function loadData() {
+    renderLiveClock();
+    renderSun();
+    try {
+      const tideJson = await safeFetchJson(tideApiUrl(cfg.tideStation));
+      renderTides(tideJson.predictions || sampleTides(), tideJson.predictions ? 'NOAA tides' : 'Sample tide data');
+    } catch (e) {
+      renderTides(sampleTides(), 'Sample tide data (NOAA fetch failed)');
+    }
+    try {
+      const windJson = await safeFetchJson(windApiUrl(cfg.windStation));
+      const wind = (windJson.data && windJson.data[0]) || (windJson.wind && windJson.wind[0]) || sampleWind();
+      renderWind(wind, (windJson.data || windJson.wind) ? 'NOAA wind' : 'Sample wind data');
+    } catch (e) {
+      renderWind(sampleWind(), 'Sample wind data (NOAA fetch failed)');
+    }
+    await loadRainForecast();
+  }
+
+  loadData();
+  renderLiveClock();
+  setInterval(renderLiveClock, 1000);
+  setInterval(loadData, 60 * 60 * 1000);
+  setInterval(() => location.reload(), 10 * 60 * 1000);
+
+  setInterval(() => {
+    if (typeof state.nextTideMinutes === 'number' && state.nextTideMinutes > 0) {
+      state.nextTideMinutes = Math.max(0, state.nextTideMinutes - 1);
+      $('nextTideCountdown').textContent = formatCountdown(state.nextTideMinutes);
+      renderFishingScore();
+    }
+  }, 60 * 1000);
+
+  window.addEventListener('resize', () => loadData());
+
+  $('fsBtn').addEventListener('click', async () => {
+    try {
+      await document.documentElement.requestFullscreen();
+    } catch (e) {
+      alert('Full screen must be allowed by the browser/device.');
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    document.body.classList.toggle('kiosk-fullscreen', !!document.fullscreenElement);
+  });
+
+  const overlay = $('videoOverlay');
+  const video = $('sponsorVideo');
+  let videoIndex = 0;
+
+  function normalizedVideos() {
+    return (cfg.videoUrls || []).filter(Boolean);
+  }
+
+  function playNextSponsor() {
+    const list = normalizedVideos();
+    if (!list.length) return;
+    const src = list[videoIndex % list.length];
+    videoIndex += 1;
+    overlay.classList.add('active');
+    video.src = src;
+    video.currentTime = 0;
+    video.muted = true;
+    video.playsInline = true;
+    video.autoplay = true;
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {
+        // keep overlay open but silently fail if browser blocks playback
+      });
+    }
+  }
+
+  function closeVideoOverlay() {
+    video.pause();
+    overlay.classList.remove('active');
+    video.removeAttribute('src');
+    video.load();
+  }
+
+  video.onended = closeVideoOverlay;
+  overlay.addEventListener('click', closeVideoOverlay);
+  setInterval(playNextSponsor, Math.max(1, Number(cfg.sponsorIntervalMinutes || 3)) * 60 * 1000);
+</script>
+</body>
+</html>
