@@ -1,0 +1,5 @@
+Bugfixes applied:
+- Replaced remaining areaCode references with zipCode in kiosk/admin.
+- Replaced remaining ?code= links with ?zip= links.
+- Fixed default profile comparison to use zipCode.
+- Added safer initial kiosk data load call.

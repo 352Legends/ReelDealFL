@@ -167,7 +167,7 @@
     profileSelect.value = profiles[current] ? current : DEFAULT_PROFILE.zipCode;
     openKioskBtn.href = `kiosk.html?zip=${selectedProfileId()}`;
     setActiveProfile(selectedProfileId());
-    launchLinks.innerHTML = Object.keys(profiles).sort().map(id => `<div style="margin-bottom:8px"><a href="kiosk.html?code=${id}">Launch ZIP ${id}</a></div>`).join('');
+    launchLinks.innerHTML = Object.keys(profiles).sort().map(id => `<div style="margin-bottom:8px"><a href="kiosk.html?zip=${id}">Launch ZIP ${id}</a></div>`).join('');
   }
 
   function fillForm() {
@@ -333,7 +333,7 @@
 
   deleteBtn.onclick = () => {
     const id = selectedProfileId();
-    if (id === DEFAULT_PROFILE.areaCode) {
+    if (id === DEFAULT_PROFILE.zipCode) {
       status.textContent = 'The default 34428 ZIP profile cannot be deleted.';
       return;
     }

@@ -142,7 +142,7 @@
 <script src="shared.js"></script>
 <script>
   const cfg = getConfig();
-  setActiveProfile(cfg.areaCode);
+  setActiveProfile(cfg.zipCode);
 
   const state = {
     latestRainChance: 0,
@@ -321,7 +321,7 @@
     await loadRainForecast();
   }
 
-  loadData();
+  try { loadData(); } catch (e) { console.error('Initial data load failed', e); }
   renderLiveClock();
   setInterval(renderLiveClock, 1000);
   setInterval(loadData, 60 * 60 * 1000);
