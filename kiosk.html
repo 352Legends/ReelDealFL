@@ -85,11 +85,6 @@
             <tbody id="tideTable"></tbody>
           </table>
         </div>
-
-        <div class="panel ad-contact">
-          <p id="adContactCopy">For Advertising Opportunities Please Call (352) 302-2882</p>
-        </div>
-
       </div>
 
       <div class="right-rail">
@@ -135,10 +130,9 @@
   </div>
 
   <div class="video-overlay" id="videoOverlay">
-    <div class="video-wrap" id="videoWrap"></div>
+    <div class="video-wrap"><video id="sponsorVideo" playsinline autoplay muted></video></div>
   </div>
 
-<script src="https://www.youtube.com/iframe_api"></script>
 <script src="shared.js"></script>
 <script>
   const cfg = getConfig();
@@ -168,7 +162,6 @@
   $('windTag').textContent = cfg.windTag || 'Live marine snapshot';
   $('weatherDetailsTitle').textContent = toTitleCase(cfg.weatherDetailsTitle || 'Weather details');
   $('weatherDetailsTag').textContent = cfg.weatherDetailsTag || 'Next 3 hours';
-  $('adContactCopy').textContent = cfg.adContactCopy || 'For Advertising Opportunities Please Call (352) 302-2882';
 
   function renderAdImage(containerId, imageData, altText) {
     const wrap = $(containerId);
@@ -350,134 +343,38 @@
   });
 
   const overlay = $('videoOverlay');
-  const videoWrap = $('videoWrap');
+  const video = $('sponsorVideo');
   let videoIndex = 0;
-  let ytPlayer = null;
-  let ytApiReady = false;
-  let pendingYouTubeVideoId = null;
-
-  window.onYouTubeIframeAPIReady = function() {
-    ytApiReady = true;
-    if (pendingYouTubeVideoId) {
-      createYouTubePlayer(pendingYouTubeVideoId);
-      pendingYouTubeVideoId = null;
-    }
-  };
 
   function normalizedVideos() {
     return (cfg.videoUrls || []).filter(Boolean);
   }
 
-  function getYouTubeVideoId(url) {
-    try {
-      const u = new URL(url);
-      if (u.hostname.includes('youtu.be')) {
-        const id = u.pathname.replace('/', '').trim();
-        return id || null;
-      }
-      if (u.hostname.includes('youtube.com')) {
-        return u.searchParams.get('v');
-      }
-    } catch (e) {}
-    return null;
-  }
-
-  function isYouTubeUrl(url) {
-    return !!getYouTubeVideoId(url);
-  }
-
-  function createYouTubePlayer(videoId) {
-    videoWrap.innerHTML = '<div id="ytSponsorPlayer" style="width:100vw;height:100vh;background:#000;"></div>';
-    ytPlayer = new YT.Player('ytSponsorPlayer', {
-      width: '100%',
-      height: '100%',
-      videoId,
-      playerVars: {
-        autoplay: 1,
-        controls: 1,
-        rel: 0,
-        modestbranding: 1,
-        playsinline: 1
-      },
-      events: {
-        onReady: (event) => {
-          try { event.target.mute(); } catch (e) {}
-          try { event.target.playVideo(); } catch (e) {}
-        },
-        onStateChange: (event) => {
-          if (event.data === YT.PlayerState.ENDED) {
-            closeVideoOverlay();
-          }
-        }
-      }
+  function playNextSponsor() {
+    const list = normalizedVideos();
+    if (!list.length) return;
+    const src = list[videoIndex % list.length];
+    videoIndex += 1;
+    overlay.classList.add('active');
+    video.src = src;
+    video.currentTime = 0;
+    video.muted = false;
+    video.play().catch(() => {
+      video.muted = true;
+      video.play().catch(() => {});
     });
   }
 
-  async function playNextSponsor() {
-    const list = normalizedVideos();
-    if (!list.length) return;
-    if (overlay.classList.contains('active')) return;
-    clearTimeout(sponsorIntervalHandle);
-    const src = list[videoIndex % list.length];
-    videoIndex += 1;
-    await ensureFullscreenMode();
-    overlay.classList.add('active');
-
-    if (isYouTubeUrl(src)) {
-      const videoId = getYouTubeVideoId(src);
-      if (ytApiReady && window.YT && window.YT.Player) {
-        createYouTubePlayer(videoId);
-      } else {
-        pendingYouTubeVideoId = videoId;
-      }
-      return;
-    }
-
-    videoWrap.innerHTML = `<video id="sponsorVideo" playsinline autoplay muted style="width:100vw;height:100vh;object-fit:contain;background:#000;"></video>`;
-    const video = document.getElementById('sponsorVideo');
-    video.src = src;
-    video.currentTime = 0;
-    video.muted = true;
-    video.playsInline = true;
-    video.autoplay = true;
-    const playPromise = video.play();
-    if (playPromise && typeof playPromise.catch === 'function') {
-      playPromise.catch(() => {});
-    }
-    video.onended = closeVideoOverlay;
-  }
-
-  async function ensureFullscreenMode() {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-      }
-    } catch (e) {}
-  }
-
-  async function closeVideoOverlay() {
+  function closeVideoOverlay() {
+    video.pause();
     overlay.classList.remove('active');
-    if (ytPlayer && typeof ytPlayer.destroy === 'function') {
-      ytPlayer.destroy();
-      ytPlayer = null;
-    }
-    videoWrap.innerHTML = '';
-    pendingYouTubeVideoId = null;
-    await ensureFullscreenMode();
-    scheduleNextSponsor();
+    video.removeAttribute('src');
+    video.load();
   }
 
-  let sponsorIntervalHandle = null;
-
-  function scheduleNextSponsor() {
-    clearTimeout(sponsorIntervalHandle);
-    sponsorIntervalHandle = setTimeout(() => {
-      playNextSponsor();
-    }, Math.max(1, Number(cfg.sponsorIntervalMinutes || 3)) * 60 * 1000);
-  }
-
+  video.onended = closeVideoOverlay;
   overlay.addEventListener('click', closeVideoOverlay);
-  scheduleNextSponsor();
+  setInterval(playNextSponsor, Math.max(1, Number(cfg.sponsorIntervalMinutes || 3)) * 60 * 1000);
 </script>
 </body>
 </html>
