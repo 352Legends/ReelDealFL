@@ -1319,3 +1319,37 @@ html, body {
     object-position: center !important;
   }
 }
+
+
+/* FORCE ALL AD IMAGES TO FULL COVER */
+.hero-ad .ad-media,
+.bottom-ad .ad-media {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  position: relative;
+}
+
+/* Ensure containers have defined height */
+.hero-ad .ad-media {
+  aspect-ratio: 1440 / 380 !important;
+}
+
+.bottom-ad .ad-media {
+  aspect-ratio: 16 / 9 !important;
+}
+
+/* FULL COVER IMAGE */
+.hero-ad .ad-media img,
+.bottom-ad .ad-media img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+}
+
+/* REMOVE ANY FALLBACK INTERFERENCE */
+.ad-media span {
+  display: none !important;
+}
