@@ -42,7 +42,7 @@
           </div>
           <div class="overview-grid">
             <div class="metric primary">
-              <div class="metric-label">Next tide</div>
+              <div class="metric-label">Current Tide</div>
               <div class="metric-value" id="nextTideLabel">Loading…</div>
               <div class="metric-sub" id="nextTideSub"></div>
               <div class="metric-sub" id="nextTideCountdown">—</div>
@@ -147,7 +147,8 @@
   const state = {
     latestRainChance: 0,
     latestWindSpeed: 0,
-    nextTideMinutes: 0
+    nextTideMinutes: 0,
+    nextTideEventAt: null
   };
 
   function $(id) { return document.getElementById(id); }
@@ -215,14 +216,15 @@
     return `In ${hours} hr ${minutes} min`;
   }
 
-  function renderTides(predictions, sourceLabel) {
-    const summary = nextTideSummary(predictions);
+  function renderTides(detailPredictions, eventPredictions, sourceLabel) {
+    const summary = currentTideSummary(detailPredictions, eventPredictions);
     state.nextTideMinutes = summary.minutesAway || 0;
-    $('nextTideLabel').textContent = summary.label;
-    $('nextTideSub').textContent = `${summary.time} · ${summary.height}`;
+    state.nextTideEventAt = summary.nextEventAt || null;
+    $('nextTideLabel').textContent = summary.height;
+    $('nextTideSub').textContent = `${summary.trend} · ${summary.nextEventLabel} ${summary.nextEventTime}`;
     $('nextTideCountdown').textContent = formatCountdown(state.nextTideMinutes);
     const rowCount = tideRowsForScreen();
-    $('tideTable').innerHTML = predictions.slice(0, rowCount).map(p => {
+    $('tideTable').innerHTML = (eventPredictions || []).slice(0, rowCount).map(p => {
       const isHigh = p.type === 'H';
       return `<tr>
         <td>${formatMonthDayTime(p.t)}</td>
@@ -306,10 +308,16 @@
     renderLiveClock();
     renderSun();
     try {
-      const tideJson = await safeFetchJson(tideApiUrl(cfg.tideStation));
-      renderTides(tideJson.predictions || sampleTides(), tideJson.predictions ? 'NOAA tides' : 'Sample tide data');
+      const [tideJson, tideEventsJson] = await Promise.all([
+        safeFetchJson(tideApiUrl(cfg.tideStation)),
+        safeFetchJson(tideEventsApiUrl(cfg.tideStation))
+      ]);
+      const detailPredictions = tideJson.predictions || sampleTides();
+      const eventPredictions = tideEventsJson.predictions || sampleTides();
+      renderTides(detailPredictions, eventPredictions, tideJson.predictions ? 'NOAA tides' : 'Sample tide data');
     } catch (e) {
-      renderTides(sampleTides(), 'Sample tide data (NOAA fetch failed)');
+      const sample = sampleTides();
+      renderTides(sample, sample, 'Sample tide data (NOAA fetch failed)');
     }
     try {
       const windJson = await safeFetchJson(windApiUrl(cfg.windStation));
@@ -328,8 +336,9 @@
   setInterval(() => location.reload(), 10 * 60 * 1000);
 
   setInterval(() => {
-    if (typeof state.nextTideMinutes === 'number' && state.nextTideMinutes > 0) {
-      state.nextTideMinutes = Math.max(0, state.nextTideMinutes - 1);
+    if (state.nextTideEventAt) {
+      const diff = Math.max(0, Math.round((new Date(state.nextTideEventAt) - new Date()) / 60000));
+      state.nextTideMinutes = diff;
       $('nextTideCountdown').textContent = formatCountdown(state.nextTideMinutes);
       renderFishingScore();
     }

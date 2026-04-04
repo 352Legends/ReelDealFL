@@ -1348,3 +1348,11 @@ html, body {
 .ad-media:not(.empty) span {
   display: none !important;
 }
+
+
+#nextTideLabel {
+  white-space: nowrap;
+}
+#nextTideSub {
+  line-height: 1.2;
+}
