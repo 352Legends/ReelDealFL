@@ -63,7 +63,6 @@
             <div><label for="windTag">Wind section tag</label><input id="windTag" type="text" /></div>
             <div><label for="weatherDetailsTitle">Weather details title</label><input id="weatherDetailsTitle" type="text" /></div>
             <div><label for="weatherDetailsTag">Weather details tag</label><input id="weatherDetailsTag" type="text" /></div>
-<div><label for="adContactCopy">Ad Contact Copy</label><input id="adContactCopy" type="text" /></div>
           </div>
         </div>
 
@@ -98,9 +97,9 @@
 
         <div class="panel">
           <h2>Sponsor videos</h2>
-          <label for="videoUrls">One YouTube link, MP4/WebM URL, or local filename per line</label>
+          <label for="videoUrls">One MP4/WebM URL or local filename per line</label>
           <textarea id="videoUrls" placeholder="https://example.com/videos/sponsor1.mp4&#10;videos/sponsor2.mp4&#10;sponsor.mp4"></textarea>
-          <p class="note">Sponsor videos play full-screen on the kiosk as a timed break and the kiosk returns to full-screen after playback. Multiple videos rotate in order. After one video ends, the kiosk waits the configured interval before playing the next video. Default interval is 3 minutes unless changed below.</p>
+          <p class="note">Videos play full-screen on the kiosk as a timed sponsor break.</p>
         </div>
       </div>
 
@@ -186,7 +185,6 @@
     windTag.value = cfg.windTag || 'Live marine snapshot';
     weatherDetailsTitle.value = cfg.weatherDetailsTitle || 'Weather details';
     weatherDetailsTag.value = cfg.weatherDetailsTag || 'Next 3 hours';
-    adContactCopy.value = cfg.adContactCopy || 'For Advertising Opportunities Please Call (352) 302-2882';
     topAdTitle.value = cfg.topAdTitle;
     topAdBody.value = cfg.topAdBody;
     bottomAdTitle.value = cfg.bottomAdTitle;
@@ -306,7 +304,6 @@
       windTag: windTag.value.trim(),
       weatherDetailsTitle: weatherDetailsTitle.value.trim(),
       weatherDetailsTag: weatherDetailsTag.value.trim(),
-      adContactCopy: adContactCopy.value.trim(),
       topAdTitle: topAdTitle.value.trim(),
       topAdBody: topAdBody.value.trim(),
       bottomAdTitle: bottomAdTitle.value.trim(),
