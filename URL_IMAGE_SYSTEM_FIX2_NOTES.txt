@@ -1,0 +1,5 @@
+URL image fix 2:
+- Adds URL normalization for Dropbox shared links, Google Drive file links, and GitHub blob links.
+- Saves normalized URLs in admin.
+- Kiosk now renders normalized URLs and shows a clear fallback message when the remote image cannot be loaded.
+- For best reliability, use a direct HTTPS JPG/PNG/WebP image URL that opens the image itself in the browser.

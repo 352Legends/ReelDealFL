@@ -481,6 +481,36 @@ function deleteProfile(profileId) {
   }
 }
 
+
+function normalizeImageUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  let value = url.trim();
+  if (!value) return '';
+
+  try {
+    const u = new URL(value);
+
+    if (u.hostname.includes('dropbox.com')) {
+      u.searchParams.set('raw', '1');
+      u.searchParams.delete('dl');
+      return u.toString();
+    }
+
+    if (u.hostname.includes('drive.google.com')) {
+      const fileMatch = u.pathname.match(/\/file\/d\/([^/]+)/);
+      const id = fileMatch ? fileMatch[1] : u.searchParams.get('id');
+      if (id) return `https://drive.google.com/uc?export=view&id=${id}`;
+    }
+  } catch (e) {}
+
+  value = value.replace(
+    /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/i,
+    'https://raw.githubusercontent.com/$1/$2/$3/$4'
+  );
+
+  return value.replace(/ /g, '%20');
+}
+
 function normalizeDateLike(dateLike) {
   if (!dateLike) return null;
   const d = typeof dateLike === 'string'

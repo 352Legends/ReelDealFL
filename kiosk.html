@@ -173,9 +173,17 @@
   function renderAdImage(containerId, imageUrl, altText) {
     const wrap = $(containerId);
     if (!wrap) return;
-    if (imageUrl) {
+    const resolvedUrl = normalizeImageUrl(imageUrl || '');
+    if (resolvedUrl) {
       wrap.classList.remove('empty');
-      wrap.innerHTML = `<img src="${imageUrl}" alt="${altText}" loading="eager" referrerpolicy="no-referrer" />`;
+      wrap.innerHTML = `<img src="${resolvedUrl}" alt="${altText}" loading="eager" crossorigin="anonymous" />`;
+      const img = wrap.querySelector('img');
+      if (img) {
+        img.onerror = () => {
+          wrap.classList.add('empty');
+          wrap.innerHTML = `<span>Image URL could not be loaded</span>`;
+        };
+      }
     } else {
       wrap.classList.add('empty');
       wrap.innerHTML = `<span>No ${altText.toLowerCase()} loaded</span>`;

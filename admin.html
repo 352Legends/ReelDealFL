@@ -80,7 +80,7 @@
         
         <div class="panel">
           <h2>Ad Images</h2>
-          <p class="note">Use direct HTTPS image URLs for best reliability across Chrome, Safari, TVs, and kiosks.</p>
+          <p class="note">Use direct HTTPS image URLs for best reliability across Chrome, Safari, TVs, and kiosks. Common Dropbox, Google Drive file links, and GitHub blob links are auto-converted when possible.</p>
           <div class="form-grid">
             <div>
               <label for="topAdImageUrl">Top ad image URL</label>
@@ -195,8 +195,8 @@
     lng.value = cfg.longitude;
     topAdImageUrl.value = cfg.topAdImage || '';
     bottomAdImageUrl.value = cfg.bottomAdImage || '';
-    setPreview(topAdPreview, cfg.topAdImage || '');
-    setPreview(bottomAdPreview, cfg.bottomAdImage || '');
+    setPreview(topAdPreview, normalizeImageUrl(cfg.topAdImage || ''));
+    setPreview(bottomAdPreview, normalizeImageUrl(cfg.bottomAdImage || ''));
   }
 
   profileSelect.addEventListener('change', () => {
@@ -220,11 +220,11 @@
   };
 
   topAdImageUrl.addEventListener('input', () => {
-    setPreview(topAdPreview, topAdImageUrl.value.trim());
+    setPreview(topAdPreview, normalizeImageUrl(topAdImageUrl.value.trim()));
   });
 
   bottomAdImageUrl.addEventListener('input', () => {
-    setPreview(bottomAdPreview, bottomAdImageUrl.value.trim());
+    setPreview(bottomAdPreview, normalizeImageUrl(bottomAdImageUrl.value.trim()));
   });
 
   saveBtn.onclick = () => {
@@ -249,8 +249,8 @@
       topAdBody: topAdBody.value.trim(),
       bottomAdTitle: bottomAdTitle.value.trim(),
       bottomAdBody: bottomAdBody.value.trim(),
-      topAdImage: topAdImageUrl.value.trim(),
-      bottomAdImage: bottomAdImageUrl.value.trim(),
+      topAdImage: normalizeImageUrl(topAdImageUrl.value.trim()),
+      bottomAdImage: normalizeImageUrl(bottomAdImageUrl.value.trim()),
       videoUrls: videoUrls.value.split(/\n+/).map(v => v.trim()).filter(Boolean),
       tideStation: tideStation.value.trim(),
       windStation: windStation.value.trim(),
