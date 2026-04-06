@@ -170,21 +170,20 @@
   $('weatherDetailsTag').textContent = cfg.weatherDetailsTag || 'Next 4 hours';
   $('adContactCopy').textContent = cfg.adContactCopy || 'For Advertising Opportunities Please Call (352) 302-2882';
 
-  async function renderAdImage(containerId, imageRef, altText, slot) {
+  function renderAdImage(containerId, imageUrl, altText) {
     const wrap = $(containerId);
     if (!wrap) return;
-    const imageData = await resolveConfigImage({ ...cfg, [slot === 'top' ? 'topAdImage' : 'bottomAdImage']: imageRef }, slot);
-    if (imageData) {
+    if (imageUrl) {
       wrap.classList.remove('empty');
-      wrap.innerHTML = `<img src="${imageData}" alt="${altText}" />`;
+      wrap.innerHTML = `<img src="${imageUrl}" alt="${altText}" loading="eager" referrerpolicy="no-referrer" />`;
     } else {
       wrap.classList.add('empty');
       wrap.innerHTML = `<span>No ${altText.toLowerCase()} loaded</span>`;
     }
   }
 
-  renderAdImage('topAdMedia', cfg.topAdImage, 'Top ad image', 'top');
-  renderAdImage('bottomAdMedia', cfg.bottomAdImage, 'Bottom ad image', 'bottom');
+  renderAdImage('topAdMedia', cfg.topAdImage, 'Top ad image');
+  renderAdImage('bottomAdMedia', cfg.bottomAdImage, 'Bottom ad image');
 
   function renderLiveClock() {
     const now = new Date();

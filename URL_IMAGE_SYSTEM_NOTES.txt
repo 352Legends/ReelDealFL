@@ -1,0 +1,5 @@
+URL image system:
+- Ad images now use direct image URLs instead of localStorage or IndexedDB blobs.
+- This is the most reliable approach across Chrome, Safari, TVs, and kiosk browsers.
+- Use public HTTPS image links for top and bottom ad placements.
+- Re-enter ad artwork URLs in admin.html after upgrading to this build.

@@ -1399,3 +1399,14 @@ html, body {
   display: block !important;
   max-width: 100% !important;
 }
+
+
+/* URL image system reliability */
+.preview-thumb {
+  display: block;
+  object-fit: contain;
+}
+input#topAdImageUrl,
+input#bottomAdImageUrl {
+  width: 100%;
+}
