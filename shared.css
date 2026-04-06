@@ -1379,3 +1379,16 @@ html, body {
     overflow: hidden;
   }
 }
+
+
+/* At a Glance cards: equal height based on tallest card */
+.overview-grid {
+  align-items: stretch !important;
+}
+
+.overview-grid .metric {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+}
