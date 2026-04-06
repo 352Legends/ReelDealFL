@@ -1,0 +1,17 @@
+Per-ZIP Tide Station Validation Mapping
+
+34428 — Crystal River: 8727343 (Crystal River, Kings Bay) nearest at 7.8 km
+34429 — Crystal River: 8727343 (Crystal River, Kings Bay) nearest at 6.9 km
+34433 — Dunnellon: 8727343 (Crystal River, Kings Bay) nearest at 13.1 km
+34434 — Dunnellon: 8727343 (Crystal River, Kings Bay) nearest at 19.0 km
+34436 — Floral City: 8727293 (Halls River Bridge, Halls River) nearest at 31.5 km
+34442 — Hernando: 8727343 (Crystal River, Kings Bay) nearest at 20.5 km
+34445 — Holder: 8727343 (Crystal River, Kings Bay) nearest at 18.8 km
+34446 — Homosassa: 8727293 (Halls River Bridge, Halls River) nearest at 9.6 km
+34448 — Homosassa: 8727274 (Mason Creek, Homosassa Bay) nearest at 2.7 km
+34450 — Inverness: 8727293 (Halls River Bridge, Halls River) nearest at 33.8 km
+34452 — Inverness: 8727293 (Halls River Bridge, Halls River) nearest at 22.2 km
+34453 — Inverness: 8727343 (Crystal River, Kings Bay) nearest at 25.5 km
+34461 — Lecanto: 8727293 (Halls River Bridge, Halls River) nearest at 12.1 km
+34465 — Beverly Hills: 8727343 (Crystal River, Kings Bay) nearest at 11.0 km
+34487 — Homosassa: 8727293 (Halls River Bridge, Halls River) nearest at 2.3 km
