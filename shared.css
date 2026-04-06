@@ -1357,3 +1357,25 @@ html, body {
   color: var(--accent2);
   font-weight: 700;
 }
+
+
+/* WEATHER DETAILS - FORCE 4 CARDS IN ONE ROW */
+#weatherHourlyGrid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 10px !important;
+}
+
+#weatherHourlyGrid .hour-card {
+  min-width: 0 !important;
+  width: 100% !important;
+  padding: 10px !important;
+  box-sizing: border-box;
+}
+
+/* Prevent wrapping */
+@media (min-width: 0px) {
+  #weatherHourlyGrid {
+    overflow: hidden;
+  }
+}
