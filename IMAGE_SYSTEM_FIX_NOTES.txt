@@ -1,0 +1,5 @@
+Image system fix:
+- Ad images are now stored in IndexedDB instead of localStorage base64 payloads.
+- Profile settings keep lightweight image references only.
+- This improves Chrome reliability where localStorage size limits were causing ad images to fail.
+- Existing old localStorage image strings still render as backward-compatible fallback.

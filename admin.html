@@ -79,7 +79,7 @@
 
         <div class="panel">
           <h2>Ad images</h2>
-          <p class="note">Top sponsor image is locked to 1440×380 ratio. Bottom ad is locked to 16:9.</p>
+          <p class="note">Top sponsor image is locked to 1440×380 ratio. Bottom ad is locked to 16:9. Images are now stored in browser IndexedDB for better Chrome reliability.</p>
           <div class="form-grid">
             <div>
               <label for="topAdImageFile">Top ad image</label>
@@ -170,7 +170,7 @@
     launchLinks.innerHTML = Object.keys(profiles).sort().map(id => `<div style="margin-bottom:8px"><a href="kiosk.html?zip=${id}">Launch ZIP ${id}</a></div>`).join('');
   }
 
-  function fillForm() {
+  async function fillForm() {
     refreshProfilesDropdown();
     const cfg = getConfig(selectedProfileId());
     title.value = cfg.title;
@@ -196,8 +196,8 @@
     windStation.value = cfg.windStation;
     lat.value = cfg.latitude;
     lng.value = cfg.longitude;
-    topAdImageData = cfg.topAdImage || '';
-    bottomAdImageData = cfg.bottomAdImage || '';
+    topAdImageData = await resolveConfigImage(cfg, 'top');
+    bottomAdImageData = await resolveConfigImage(cfg, 'bottom');
     setPreview(topAdPreview, topAdImageData);
     setPreview(bottomAdPreview, bottomAdImageData);
   }
@@ -275,21 +275,23 @@
     status.textContent = 'Bottom ad image optimized and loaded. Click Save selected profile to publish it.';
   });
 
-  clearTopAdImage.onclick = () => {
+  clearTopAdImage.onclick = async () => {
     topAdImageData = '';
     topAdImageFile.value = '';
     setPreview(topAdPreview, '');
+    try { await deleteAdAsset(selectedProfileId(), 'top'); } catch (e) {}
     status.textContent = 'Top ad image removed. Save to publish.';
   };
 
-  clearBottomAdImage.onclick = () => {
+  clearBottomAdImage.onclick = async () => {
     bottomAdImageData = '';
     bottomAdImageFile.value = '';
     setPreview(bottomAdPreview, '');
+    try { await deleteAdAsset(selectedProfileId(), 'bottom'); } catch (e) {}
     status.textContent = 'Bottom ad image removed. Save to publish.';
   };
 
-  saveBtn.onclick = () => {
+  saveBtn.onclick = async () => {
     const id = selectedProfileId();
     const cfg = {
       zipCode: id,
@@ -311,17 +313,23 @@
       topAdBody: topAdBody.value.trim(),
       bottomAdTitle: bottomAdTitle.value.trim(),
       bottomAdBody: bottomAdBody.value.trim(),
-      topAdImage: topAdImageData,
-      bottomAdImage: bottomAdImageData,
+      topAdImage: topAdImageData ? makeIndexedDbImageRef(id, 'top') : '',
+      bottomAdImage: bottomAdImageData ? makeIndexedDbImageRef(id, 'bottom') : '',
       videoUrls: videoUrls.value.split(/\n+/).map(v => v.trim()).filter(Boolean),
       tideStation: tideStation.value.trim(),
       windStation: windStation.value.trim(),
       latitude: Number(lat.value),
       longitude: Number(lng.value),
     };
-    saveConfig(cfg, id);
-    refreshProfilesDropdown();
-    status.textContent = `Saved profile ${id}. Launch kiosk.html?zip=${id} on the display.`;
+    try {
+      if (topAdImageData) await saveAdAsset(id, 'top', topAdImageData); else await deleteAdAsset(id, 'top');
+      if (bottomAdImageData) await saveAdAsset(id, 'bottom', bottomAdImageData); else await deleteAdAsset(id, 'bottom');
+      saveConfig(cfg, id);
+      refreshProfilesDropdown();
+      status.textContent = `Saved profile ${id}. Launch kiosk.html?zip=${id} on the display.`;
+    } catch (err) {
+      status.textContent = 'Save failed. Browser image storage failed. Try a smaller image or another browser profile.';
+    }
   };
 
   resetBtn.onclick = () => {

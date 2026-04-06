@@ -1392,3 +1392,10 @@ html, body {
   flex-direction: column !important;
   justify-content: flex-start !important;
 }
+
+
+/* Image system fix: ensure loaded ad images render reliably in Chrome */
+.ad-media img {
+  display: block !important;
+  max-width: 100% !important;
+}
