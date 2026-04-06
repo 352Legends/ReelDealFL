@@ -221,8 +221,15 @@
     $('currentTideLabel').textContent = summary.label;
     $('currentTideSub').textContent = `${summary.height} · ${summary.time}`;
     $('currentTideCountdown').textContent = `Changes ${formatCountdown(state.currentTideMinutes)}`;
+
+    const now = new Date();
+    const upcoming = (predictions || []).filter(p => {
+      const d = normalizeDateLike(p.t);
+      return d && d >= now;
+    });
+
     const rowCount = tideRowsForScreen();
-    $('tideTable').innerHTML = predictions.slice(0, rowCount).map(p => {
+    $('tideTable').innerHTML = upcoming.slice(0, rowCount).map(p => {
       const isHigh = p.type === 'H';
       return `<tr>
         <td>${formatMonthDayTime(p.t)}</td>
