@@ -118,7 +118,7 @@
 
           <div class="section-heading weather-subhead">
             <h2 id="weatherDetailsTitle">Weather details</h2>
-            <span class="section-tag" id="weatherDetailsTag">Next 3 hours</span>
+            <span class="section-tag" id="weatherDetailsTag">Next 4 hours</span>
           </div>
           <div class="weather-hourly-grid" id="weatherHourlyGrid"></div>
         </div>
@@ -167,7 +167,7 @@
   $('windTitle').textContent = toTitleCase(cfg.windTitle || 'Wind details');
   $('windTag').textContent = cfg.windTag || 'Live marine snapshot';
   $('weatherDetailsTitle').textContent = toTitleCase(cfg.weatherDetailsTitle || 'Weather details');
-  $('weatherDetailsTag').textContent = cfg.weatherDetailsTag || 'Next 3 hours';
+  $('weatherDetailsTag').textContent = cfg.weatherDetailsTag || 'Next 4 hours';
   $('adContactCopy').textContent = cfg.adContactCopy || 'For Advertising Opportunities Please Call (352) 302-2882';
 
   function renderAdImage(containerId, imageData, altText) {
@@ -261,7 +261,7 @@
   }
 
   function renderWeatherDetails(periods, sourceLabel) {
-    const rows = (periods || []).slice(0, 3);
+    const rows = (periods || []).slice(0, 4);
     $('weatherHourlyGrid').innerHTML = rows.map((p) => {
       const icon = weatherIconFromForecast(p.shortForecast || '');
       const clouds = cloudCoverFromForecast(p.shortForecast || '');
@@ -274,7 +274,7 @@
         </div>
         <div class="hour-temp">${temp}°</div>
         <div class="hour-meta"><span>Clouds</span><strong>${clouds}</strong></div>
-        <div class="hour-meta"><span>UV</span><strong>${uv}</strong></div>
+        <div class="hour-meta"><span>Rain</span><strong>${p.probabilityOfPrecipitation?.value ?? 0}%</strong></div>
       </div>`;
     }).join('');
     $('updatedAt').textContent = `${sourceLabel} · updated ${formatDateTime()}`;
